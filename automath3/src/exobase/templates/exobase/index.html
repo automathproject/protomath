@@ -1,0 +1,9 @@
+{% if latest_exercice_list %}
+    <ul>
+    {% for exercice in latest_exercice_list %}
+        <li><a href="/exobase/{{ exercice.id }}/">{{ exercice.enonce_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}

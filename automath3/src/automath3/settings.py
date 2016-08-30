@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'exobase.apps.ExobaseConfig',
+    'exobase',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
