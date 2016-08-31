@@ -1,9 +1,24 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+<h1>Bienvenue sur automath</h1>
+
+
+
+
+
 {% if latest_exercice_list %}
+<p> Les dix derniers exercices en ligne sont : </p>
     <ul>
     {% for exercice in latest_exercice_list %}
-        <li><a href="/exobase/{{ exercice.id }}/">{{ exercice.enonce_text }}</a></li>
+        <li><a href="/exobase/{{ exercice.id }}/">Exercice {{ exercice.id }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No polls are available.</p>
+    <p>Aucun exercice n'est présent dans la base.</p>
 {% endif %}
+
+<h3><a href="/exobase/new/">- Ajouter un nouvel exercice -</a></h3>
+
+{% endblock %}
+ 

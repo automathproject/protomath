@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^(?P<exercice_id>[0-9]+)/$', views.detail, name='detail'),
+    url(r'^new/$', views.post_new, name='post_new'),
 ]

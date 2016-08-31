@@ -1,0 +1,33 @@
+{% load staticfiles %}
+
+<html>
+    <head>
+        <title>automath</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'exobase/style.css' %}">
+        
+        <script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+		</script>
+		<script type="text/javascript" async
+  		src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+		</script>
+    </head>
+    
+     <body>
+    <div class="page-header">
+    <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+        <h1><a href="/exobase/">automath.org</a></h1>
+    </div>
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+            {% block content %}
+            {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
