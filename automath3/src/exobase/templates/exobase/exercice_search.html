@@ -1,9 +1,9 @@
 {% extends 'exobase/base.html' %}
 
 {% block content %}
-    <h1>Nouvel exercice</h1>
+    <h1>Recherche d'exercice par son numéro</h1>
     <form method="POST" class="post-form">{% csrf_token %}
-        {{ form }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        {{ form.as_p }}
+    <input type="submit" value="Submit" />
     </form>
 {% endblock %}

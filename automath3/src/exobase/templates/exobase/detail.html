@@ -2,5 +2,17 @@
 
 {% block content %}
 <h1>Exercice {{ exercice.id }}</h1>
+
+<a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+
 <p>{{ exercice.enonce_text }}</p>
+
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+    </form>
+    
+<h3>Correction : </h3>
+
+<p>{{ exercice.corrige_text }}</p>
+
 {% endblock %}
