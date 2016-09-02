@@ -1,13 +1,18 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.utils import timezone
+from django.contrib import auth
+from django.contrib.auth.forms import UserCreationForm
+#from django.contrib.auth.decorators import login_required
+#from django.core.urlresolvers import reverse
 from exobase.models import Exercice
-from .forms import ExoForm, ExoSearch
+from .forms import ExoForm, ExoSearch, NewUser
 
 def index(request):
     latest_exercice_list = Exercice.objects.order_by('-pub_date')[:10]
     context = {'latest_exercice_list': latest_exercice_list}
     return render(request, 'exobase/index.html', context)
 
+#@login_required(redirect_field_name='rediriger vers')
 def detail(request, exercice_id):
     exercice = get_object_or_404(Exercice, pk=exercice_id)       
     return render(request, 'exobase/detail.html', {'exercice': exercice, })
@@ -46,4 +51,28 @@ def ex_edit(request, pk):
             return redirect('detail', exercice_id=exercice.pk)
     else:
         form = ExoForm(instance=exercice)
-    return render(request, 'exobase/exercice_edit.html', {'form': form})       
+    return render(request, 'exobase/exercice_edit.html', {'form': form})   
+
+
+# 
+def user_new(request):
+    if request.method == "POST":
+        form = NewUser(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = NewUser()
+    return render(request, 'exobase/new_user.html',{'form':form})
+    
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponseRedirect("/exobase/login")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/register.html", {
+        'form': form,
+    })

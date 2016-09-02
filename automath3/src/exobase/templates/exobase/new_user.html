@@ -1,0 +1,10 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+
+    <h1>Nouvel utilisateur</h1>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}

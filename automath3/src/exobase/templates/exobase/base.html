@@ -20,6 +20,16 @@
     <div class="page-header">
     <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
         <h1><a href="/exobase/">automath.org</a></h1>
+
+{% if user.is_authenticated %}
+<p> Vous êtes connecté en tant que : {{ user.username }}. </p> <a href="/exobase/logout/">Déconnexion</a>
+
+{% else %}
+<a href="/exobase/login/"> - Connexion - </a>
+{% endif %}
+<a href="/exobase/register/"> - Créer un nouveau compte utilisateur - </a>
+<a href="/exobase/new/">- Ajouter un nouvel exercice -</a>
+<a href="/exobase/search/">- Rechercher un exercice -</a>
     </div>
     <div class="content container">
         <div class="row">

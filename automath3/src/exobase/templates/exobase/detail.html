@@ -1,9 +1,9 @@
 {% extends 'exobase/base.html' %}
 
 {% block content %}
-<h1>Exercice {{ exercice.id }}</h1>
+<h1> Exercice {{ exercice.id }} <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+ </h1>
 
-<a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
 
 <p>{{ exercice.enonce_text }}</p>
 
@@ -13,6 +13,9 @@
     
 <h3>Correction : </h3>
 
+
+
 <p>{{ exercice.corrige_text }}</p>
+
 
 {% endblock %}

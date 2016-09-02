@@ -1,0 +1,12 @@
+{% extends "exobase/base.html" %}
+
+{% block title %}Nouveau compte{% endblock %}
+
+{% block content %}
+  <h1>Créer un nouveau compte</h1>
+
+  <form action="" method="post"> {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Create the account">
+  </form>
+{% endblock %}
