@@ -4,12 +4,16 @@
 <h1> Exercice {{ exercice.id }} <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
  </h1>
 
-
-<p>{{ exercice.enonce_text }}</p>
-
-    <form method="POST" class="post-form">{% csrf_token %}
+            <script type="tex/latex">
+                {{ exercice.enonce_text }}
+            </script>
+            <script type="text/javascript">
+                $('body').latex();
+            </script>
+            
+<form method="POST" class="post-form">{% csrf_token %}
         {{ form }}
-    </form>
+</form>
     
 <h3>Correction : </h3>
 
