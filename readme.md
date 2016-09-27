@@ -13,6 +13,6 @@ Il nécessaire d'avoir django 1.9.
 
 ## Lancement
 
-1: Depuis la racine des sources taper
+1: Depuis la racine /src/ taper
   python manage.py runserver
 2. Visiter http://localhost:8000/exobase
