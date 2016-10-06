@@ -7,10 +7,11 @@ class ExoForm(forms.ModelForm):
     
     class Meta:
         model = Exercice
-        fields = ('enonce_text','corrige_text')
+        fields = ('enonce_text','corrige_text','tags')
         labels = {
                   'enonce_text': 'énoncé',
                   'corrige_text': 'corrigé',
+                  'tags': 'tags',
         }
 
 class ExoSearch(forms.Form):

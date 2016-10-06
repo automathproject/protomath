@@ -2,13 +2,14 @@
 
 ## Dépendances
 
-Il nécessaire d'avoir django 1.9.
+Il nécessaire d'avoir django 1.9. minimum
 
 ## Installation
 
-
 1. Récupérer les sources (git ou zip)
-2. Depuis la racine des sources, construire la base de données en tapant
+2. Installer 'taggit' : 
+  pip install django-taggit
+3. Depuis la racine des sources, construire la base de données en tapant
   python manage.py migrate
 
 ## Lancement
