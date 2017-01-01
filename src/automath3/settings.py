@@ -59,6 +59,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'automath3.urls'
 
+TAGGIT_CASE_INSENSITIVE = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

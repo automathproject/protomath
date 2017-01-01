@@ -7,7 +7,7 @@ class ExoForm(forms.ModelForm):
     
     class Meta:
         model = Exercice
-        fields = ('enonce_text','corrige_text','tags')
+        fields = ['enonce_text','corrige_text','tags']
         labels = {
                   'enonce_text': 'énoncé',
                   'corrige_text': 'corrigé',

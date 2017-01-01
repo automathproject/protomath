@@ -25,6 +25,7 @@ def ex_new(request):
             exercice = form.save(commit=False)
             exercice.pub_date = timezone.now()
             exercice.save()
+            form.save_m2m()
             return redirect('detail',exercice_id=exercice.pk)
     else:
         form = ExoForm()
@@ -49,6 +50,7 @@ def ex_edit(request, pk):
             exercice = form.save(commit=False)
             exercice.pub_date = timezone.now()
             exercice.save()
+            form.save_m2m()
             return redirect('detail', exercice_id=exercice.pk)
     else:
         form = ExoForm(instance=exercice)

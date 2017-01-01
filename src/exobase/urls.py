@@ -13,5 +13,4 @@ urlpatterns = [
     url(r'^login/$', login, {'template_name': 'login.html', 'authentication_form': LoginForm}),   
     url(r'^logout/$', logout, {'next_page': '/exobase/login'}),  
     url(r'^register/$', views.register, name='register'),  
-
 ]
