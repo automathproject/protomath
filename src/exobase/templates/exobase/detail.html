@@ -1,25 +1,19 @@
-{% extends 'exobase/base.html' %}
+{% extends 'exobase/exercice_search.html' %}
+
 
 {% block content %}
-<h1> Exercice {{ exercice.id }}  <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+<h1> Exercice {{ exercice.id }}  {% if user.is_authenticated %}
+ <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a> {% endif %}
  </h1>
-<p>
-            <script type="tex/latex">
-                {{ exercice.enonce_text }}
-            </script>
-            <script type="text/javascript">
-                $('body').latex();
-            </script>
-</p>            
-    
+ <p> Auteur :   {{ exercice.author.username }} ; Dernière modification : {{ exercice.pub_date }} </p>
+ <h3>Enoncé : </h3>
+
+                {{ exercice.enonce_text|safe }}
+
 <h3>Correction : </h3>
 <p>
-            <script type="tex/latex">
                 {{ exercice.corrige_text }}
-</script>
-            <script type="text/javascript">
-                $('body').latex();
-            </script>
+
 </p>      
 
 <h3>Tags : </h3> 
@@ -27,3 +21,4 @@
 
 {% endblock %}
 
+{% include "exercice_search.html" %}

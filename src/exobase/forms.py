@@ -16,6 +16,9 @@ class ExoForm(forms.ModelForm):
 
 class ExoSearch(forms.Form):
     my_num = forms.IntegerField(label='numéro d\'exercice')
+
+class ExoSearch2(forms.Form):
+    my_tag = forms.CharField(label='tag d\'exercice')
     
 class ConnexionForm(forms.Form):
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)

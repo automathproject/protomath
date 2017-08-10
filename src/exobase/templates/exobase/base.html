@@ -12,11 +12,11 @@
   		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 		</script>
 		<script type="text/javascript" async
-  		src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+  		src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
 		</script>
 		
-		<link rel="stylesheet" href="{% static 'css/latex2html5.css' %}"> 
-     <script type="text/javascript" src="{% static 'js/latex2html5.min.js' %}"></script> 
+	<!-- 	<link rel="stylesheet" href="{% static 'css/latex2html5.css' %}"> 
+     <script type="text/javascript" src="{% static 'js/latex2html5.min.js' %}"></script>  -->
     </head>
     
      <body>
@@ -32,12 +32,19 @@
 {% endif %}
 <a href="/exobase/register/"> - Créer un nouveau compte utilisateur - </a>
 <a href="/exobase/new/">- Ajouter un nouvel exercice -</a>
-<a href="/exobase/search/">- Rechercher un exercice -</a>
+<a href="/exobase/search/">- Rechercher un exercice par numéro -</a>
+<a href="/exobase/search2/">- Rechercher un exercice par tag -</a>
+<form type="get" action='/exobase/list/' style="margin: 0">
+    <input  id="search_box" type="text" name="search_box"  placeholder="Search..." >
+    <button id="search_submit" type="submit" >Submit</button>
+</form>
+
     </div>
+   
     
     <div class="content container">
         <div class="row">
-            <div class="col-md-8">
+            <div  class="col-md-8">
             {% block content %}
             {% endblock %}
             </div>
