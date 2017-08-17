@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Exercice
+from .models import Exercice, Folder
 from django.contrib.auth.forms import AuthenticationForm 
 
 class ExoForm(forms.ModelForm):
@@ -15,10 +15,34 @@ class ExoForm(forms.ModelForm):
         }
 
 class ExoSearch(forms.Form):
-    my_num = forms.IntegerField(label='numéro d\'exercice')
+    my_num = forms.IntegerField(label='numéro d\'exercice', widget=forms.NumberInput(attrs={'style': 'width:15ch' }) )
 
 class ExoSearch2(forms.Form):
     my_tag = forms.CharField(label='tag d\'exercice')
+    
+class FolderForm(forms.ModelForm):
+    
+    class Meta:
+        model = Folder
+        fields = ['name']
+        labels = {'name': 'nom',
+                  }
+    
+class FolderAddExercice(forms.Form):
+    my_exercices = forms.CharField(label='numéro d\'exercices',help_text='entrer un numéro ou une liste de numéros séparés par une virgule')
+
+    def clean_my_exercices(self):
+        data = self.cleaned_data['my_exercices']    
+        data = data.replace(';',',').replace(' ',',').split(',')
+        data = [int(x) for x in data]   
+        return data
+
+class ExerciceAddToFolder(forms.Form):
+    my_folder = forms.IntegerField(label='numéro de dossier')
+
+class FolderForm2(forms.Form):
+    name = forms.CharField(max_length=20)
+    exercices = forms.ModelMultipleChoiceField(queryset=Exercice.objects.all())
     
 class ConnexionForm(forms.Form):
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)

@@ -1,24 +1,43 @@
-{% extends 'exobase/exercice_search.html' %}
+{% extends 'exobase/base.html' %}
+
 
 
 {% block content %}
-<h1> Exercice {{ exercice.id }}  {% if user.is_authenticated %}
+
+
+
+
+<h1> Exercice {{ exercice.id }}  
+{% if user.is_authenticated %}
  <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a> {% endif %}
  </h1>
- <p> Auteur :   {{ exercice.author.username }} ; Dernière modification : {{ exercice.pub_date }} </p>
- <h3>Enoncé : </h3>
-
+ <p> Auteur :   {{ exercice.author.username }} ; Dernière modification : {{ exercice.pub_date|date:"D d M Y" }} </p>
+ <form method="post" action="{% url 'exercice_add_to_folder' exercice_id=exercice.id %}" style="margin: 0">{% csrf_token %}
+    <input  id="add_box" type="number" name="add_ex_box"  placeholder="Add..." >
+    <button id="number_submit" type="submit" >Ajouter au dossier</button>
+</form>
+ <div id="exo">
+  <h3>Enoncé : </h3>
+  <div>
                 {{ exercice.enonce_text|safe }}
+  </div>
+  
+  
 
 <h3>Correction : </h3>
+  <div>
 <p>
                 {{ exercice.corrige_text }}
 
 </p>      
-
+</div>
 <h3>Tags : </h3> 
-<p>{{ exercice.tags.all|join:", "}}</p> 
-
+<div>
+<p> 
+{% for tag in exercice.tags.all %}
+<a href="{% url 'exo_list'  tag_slug=tag.slug %}"> {{ tag }}</a>, 
+{% endfor %}
+</p>
+</div>
+</div>
 {% endblock %}
-
-{% include "exercice_search.html" %}
