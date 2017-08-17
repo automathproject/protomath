@@ -39,7 +39,7 @@
      <body>
     <div class="page-header">
     <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-        <h1><a href="/exobase/"><img src="{% static 'exobase/logo.png' %}" alt="automath.org" style="width:176px;height:107px;"></a></h1>
+        <h1><a href="/exobase/">automath.org</a></h1>
 
 {% if user.is_authenticated %}
 <p> Vous êtes connecté en tant que : {{ user.username }}. </p> <a href="/exobase/logout/">Déconnexion</a>

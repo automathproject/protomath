@@ -27,15 +27,9 @@ def detail(request, exercice_id):
     return render(request, 'exobase/detail.html', {'exercice': exercice })
 
 
-#liste d'exercice après une recherche par tag
-def exo_list(request, tag_slug=None):
-    exercice_list = Exercice.objects.all()
-    if tag_slug:
-        tag = get_object_or_404(Tag, slug=tag_slug)
-        exercice_list = exercice_list.filter(tags__name__in=[tag])
-    context = {'exercice_list': exercice_list, 'tag': tag}
-    return render(request, 'exobase/exercice_list.html', context)
 
+
+#moteur de recherche en haut de page
 class ExerciceList(ListView):
     template_name = 'exobase/exercice_list2.html'
     model = Exercice
@@ -49,6 +43,42 @@ class ExerciceList(ListView):
             p = p.filter( reduce(operator.and_,(Q(enonce_text__icontains=q) for q in query_list)) |
              reduce(operator.and_,(Q(tags__name__icontains=q) for q in query_list))             )
         return p
+
+
+def recherche(request):
+    if request.method == "POST":
+        form = ExoSearch(request.POST)
+        if form.is_valid():
+            my_num = form.cleaned_data['my_num']
+            if Exercice.objects.filter(pk=my_num).exists():
+                return redirect('detail',exercice_id=my_num)
+            else:
+                messages.add_message(request, messages.WARNING, u'L\'exercice recherché n\'existe pas')
+    else:
+        form = ExoSearch()
+    return render(request, 'exobase/exercice_search.html', {'form': form})   
+
+def recherche2(request):
+    if request.method == "POST":
+        form = ExoSearch2(request.POST)
+        if form.is_valid():
+            my_tag = slugify(form.cleaned_data['my_tag'])
+            if Tag.objects.filter(slug = my_tag).exists():
+                return redirect('exo_list',tag_slug = my_tag)
+            else:
+                messages.add_message(request, messages.WARNING, u'Le tag recherché n\'existe pas')
+    else:
+        form = ExoSearch2()
+    return render(request, 'exobase/exercice_search2.html', {'form': form})    
+
+#liste d'exercice après une recherche par tag
+def exo_list(request, tag_slug=None):
+    exercice_list = Exercice.objects.all()
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        exercice_list = exercice_list.filter(tags__name__in=[tag])
+    context = {'exercice_list': exercice_list, 'tag': tag}
+    return render(request, 'exobase/exercice_list.html', context)
 
 @login_required(redirect_field_name='exobase/login/')
 def ex_new(request):
@@ -66,6 +96,23 @@ def ex_new(request):
     return render(request, 'exobase/exercice_edit.html', {'form': form})
 
 @login_required(redirect_field_name='exobase/login/')
+def ex_edit(request, pk):
+    exercice = get_object_or_404(Exercice, pk=pk)
+    if request.method == "POST":
+        form = ExoForm(request.POST, instance=exercice)
+        if form.is_valid():
+            exercice = form.save(commit=False)
+            exercice.pub_date = timezone.now()
+            exercice.save()
+            form.save_m2m()
+            return redirect('detail', exercice_id=exercice.pk)
+    else:
+        form = ExoForm(instance=exercice)
+    return render(request, 'exobase/exercice_edit.html', {'form': form, 'exercice': exercice})   
+
+
+
+@login_required(redirect_field_name='exobase/login/')
 def folder_new(request):
     if request.method == "POST":
         form = FolderForm(request.POST)
@@ -79,6 +126,21 @@ def folder_new(request):
     else:
         form = FolderForm()
     return render(request, 'exobase/folder_edit.html', {'form': form})
+
+@login_required(redirect_field_name='exobase/login/')
+def folder_edit(request, pk):
+    folder = get_object_or_404(Folder, pk=pk)
+    if request.method == "POST":
+        form = FolderForm(request.POST, instance=folder)
+        if form.is_valid():
+            folder = form.save(commit=False)
+            folder.pub_date = timezone.now()
+            folder.save()
+            form.save_m2m()
+            return redirect('detail_folder', folder_id=folder.pk)
+    else:
+        form = FolderForm(instance=folder)
+    return render(request, 'exobase/folder_edit.html', {'form': form, 'folder': folder})   
 
 def detail_folder(request, folder_id):
     folder = get_object_or_404(Folder, pk=folder_id)
@@ -119,6 +181,7 @@ def detail_folder(request, folder_id):
         form = FolderAddExercice()    
     return render(request, 'exobase/detail_folder.html', {'folder': folder , 'order_ex_list': order_ex_list, 'form': form, 'numbermaxplusun': numbermaxplusun})
 
+@login_required(redirect_field_name='exobase/login/')
 def delete_exercice_folder(request,folder_id,exercice_id):
     folder = get_object_or_404(Folder, pk=folder_id)
     exercice = get_object_or_404(Exercice, pk=exercice_id)
@@ -134,6 +197,7 @@ def delete_exercice_folder(request,folder_id,exercice_id):
     return redirect('detail_folder',folder_id=folder_id)
 
 #inutile car la fonctionnalité existe déjà dans la vue detail_folder
+@login_required(redirect_field_name='exobase/login/')
 def folder_add_exercice(request,pk):
     folder = get_object_or_404(Folder, pk=pk)
     exercice_in_folder = folder.exercices.all()
@@ -169,6 +233,7 @@ def folder_add_exercice(request,pk):
         form = FolderAddExercice()
     return render(request, 'exobase/folder_add_exercice.html', {'form': form, 'folder': folder})
 
+@login_required(redirect_field_name='exobase/login/')
 def exercice_add_to_folder(request,exercice_id):
     if request.method == "POST":
         form = request.POST.get('add_ex_box')
@@ -206,62 +271,9 @@ def exercice_add_to_folder(request,exercice_id):
             
     
 
-def recherche(request):
-    if request.method == "POST":
-        form = ExoSearch(request.POST)
-        if form.is_valid():
-            my_num = form.cleaned_data['my_num']
-            if Exercice.objects.filter(pk=my_num).exists():
-                return redirect('detail',exercice_id=my_num)
-            else:
-                messages.add_message(request, messages.WARNING, u'L\'exercice recherché n\'existe pas')
-    else:
-        form = ExoSearch()
-    return render(request, 'exobase/exercice_search.html', {'form': form})   
-
-def recherche2(request):
-    if request.method == "POST":
-        form = ExoSearch2(request.POST)
-        if form.is_valid():
-            my_tag = slugify(form.cleaned_data['my_tag'])
-            if Tag.objects.filter(slug = my_tag).exists():
-                return redirect('exo_list',tag_slug = my_tag)
-            else:
-                messages.add_message(request, messages.WARNING, u'Le tag recherché n\'existe pas')
-    else:
-        form = ExoSearch2()
-    return render(request, 'exobase/exercice_search2.html', {'form': form})    
 
 
-@login_required(redirect_field_name='exobase/login/')
-def ex_edit(request, pk):
-    exercice = get_object_or_404(Exercice, pk=pk)
-    if request.method == "POST":
-        form = ExoForm(request.POST, instance=exercice)
-        if form.is_valid():
-            exercice = form.save(commit=False)
-            exercice.pub_date = timezone.now()
-            exercice.save()
-            form.save_m2m()
-            return redirect('detail', exercice_id=exercice.pk)
-    else:
-        form = ExoForm(instance=exercice)
-    return render(request, 'exobase/exercice_edit.html', {'form': form, 'exercice': exercice})   
 
-@login_required(redirect_field_name='exobase/login/')
-def folder_edit(request, pk):
-    folder = get_object_or_404(Folder, pk=pk)
-    if request.method == "POST":
-        form = FolderForm(request.POST, instance=folder)
-        if form.is_valid():
-            folder = form.save(commit=False)
-            folder.pub_date = timezone.now()
-            folder.save()
-            form.save_m2m()
-            return redirect('detail_folder', folder_id=folder.pk)
-    else:
-        form = FolderForm(instance=folder)
-    return render(request, 'exobase/folder_edit.html', {'form': form, 'folder': folder})   
 
 # 
 def user_new(request):
