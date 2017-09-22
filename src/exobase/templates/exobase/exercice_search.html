@@ -1,10 +1,18 @@
 {% extends 'exobase/base.html' %}
 
-{% block content %}
-    <h1>Recherche d'exercice par son numéro</h1>
+{% block content %} 
+<div class="container">
+<div class="row">
+<div class="col-md-8">
+<div class="title">
+    Recherche d'exercice par numéro</div>
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
     <input type="submit" value="Submit" />
-    </form>
+    </form> 
+    </div>
+    </div>
+    </div>
     
 {% endblock %}
+

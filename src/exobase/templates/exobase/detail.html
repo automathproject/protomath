@@ -1,43 +1,365 @@
 {% extends 'exobase/base.html' %}
 
+{% load exobase_extras %}
 
 
 {% block content %}
 
+<div id="mySidenav" class="sidenav">
+
+<p>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+</p>
 
 
+<div style="padding:10px">
+ Changer la visibilité :
+ </div>
+<div>
+{% if exercice|visible_by_group:'PUBLIC' %}
 
-<h1> Exercice {{ exercice.id }}  
-{% if user.is_authenticated %}
- <a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a> {% endif %}
- </h1>
- <p> Auteur :   {{ exercice.author.username }} ; Dernière modification : {{ exercice.pub_date|date:"D d M Y" }} </p>
- <form method="post" action="{% url 'exercice_add_to_folder' exercice_id=exercice.id %}" style="margin: 0">{% csrf_token %}
-    <input  id="add_box" type="number" name="add_ex_box"  placeholder="Add..." >
-    <button id="number_submit" type="submit" >Ajouter au dossier</button>
+ <div>
+ <span class="dropdown pull-right">
+<form action="{% url 'ex_add_perm' pk=exercice.id %}">
+	<select name="perm_box">
+		<option value='public'> Public </option>
+		<option value='private'> Limité </option>
+	</select>
+	<input type='submit'>
 </form>
- <div id="exo">
-  <h3>Enoncé : </h3>
+</span>
+</div>
+
+
+
+
+{% else %}
+<form action="{% url 'ex_add_perm' pk=exercice.id %}">
+	<select name="perm_box">
+		<option value='private'> Limité </option>
+		<option value='public'> Public </option>
+	</select>
+	<input type='submit'>
+</form>
+
+
+<button class="accordion"> Lecteurs autorisés : </button>
+
+<div class="panel2">
+
+
+<div class="shortlist">
+<ul id="myUL" class="myshortlist">
+{% for n in reader_list %}
+<li><a href="#"> {{ n }} </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput" class="listsearch" onkeyup="UserSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+
+<div style="padding:10px">
+Supprimer un lecteur :
+
+ </div>
+<div class="form-group">
+<form method="POST" action="{% url 'ex_delete_reader' exercice_id=exercice.id %}">{% csrf_token %}
+					<input id="delete_reader_box" type="text" name="delete_reader_box"
+						class="input-sm form-control" placeholder="Nom">
+					<button id="search_submit" type="submit"
+						class="btn btn-warning btn-sm">
+						<span class="glyphicon glyphicon-remove"></span> Supprimer
+					</button>
+</form>
+</div>
+
+<div style="padding:10px">
+Ajouter un lecteur :
+
+ </div>
+<div class="form-group">
+<form method="POST" action="{% url 'ex_add_reader' exercice_id=exercice.id %}">{% csrf_token %}
+					<input id="add_reader_box" type="text" name="add_reader_box"
+						class="input-sm form-control" placeholder="Nom">
+					<button id="search_submit" type="submit"
+						class="btn btn-primary btn-sm">
+						<span class="glyphicon glyphicon-eye-plus"></span> Ajouter
+					</button>
+</form>
+</div>
+</div>
+
+<button class="accordion"> Classes autorisées : </button>
+
+<div class="panel2">
+<div class="shortlist">
+<ul id="myUL2" class="myshortlist" >
+{% for n in classe_list %}
+<li><a href="#"> #{{ n.0 }} {{ n.1 }} </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput2" class="listsearch" onkeyup="GroupSearch()" placeholder="Chercher une classe" title="Chercher une classe">
+
+<div style="padding:10px">
+Ajouter une classe :
+
+ </div>
+<div class="form-group">
+<form method="POST" action="{% url 'ex_add_group' exercice_id=exercice.id %}">{% csrf_token %}
+					<input id="add_group_box" type="text" name="add_group_box"
+						class="input-sm form-control" placeholder="Numéro">
+					<button id="search_submit" type="submit"
+						class="btn btn-primary btn-sm">
+						<span class="glyphicon glyphicon-eye-plus"></span> Ajouter
+					</button>
+</form>
+</div>
+
+<div style="padding:10px">
+Supprimer une classe :
+
+ </div>
+<div class="form-group">
+<form method="POST" action="{% url 'ex_delete_group' exercice_id=exercice.id %}">{% csrf_token %}
+					<input id="delete_group_box" type="text" name="delete_group_box"
+						class="input-sm form-control" placeholder="Numéro">
+					<button id="search_submit" type="submit"
+						class="btn btn-warning btn-sm">
+						<span class="glyphicon glyphicon-remove"></span> Supprimer
+					</button>
+</form>
+</div>
+</div>
+
+{% endif %}
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+<div class="col-md-8">
+
+
+<div class="entete">
+<a href="{% url 'detail'  exercice_id=exercice.id %}"> <kbd>#{{ exercice.id }}</kbd> </a>
+{% if user == exercice.author %}
+<a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+
+<span style="font-size:16px;cursor:pointer" onclick="togNav()"> 
+{% if exercice|visible_by_group:'PUBLIC' %}
+ <span class="label label-success glyphicon glyphicon-eye-open"> public </span>
+{% else %}
+ <span class="label label-warning glyphicon glyphicon-eye-open"> limité </span>
+
+{% endif %}</span>
+{% else %}
+{% if exercice|visible_by_group:'PUBLIC' %}
+ <span class="label label-success glyphicon glyphicon-eye-open">  </span>
+{% else %}
+ <span class="label label-warning glyphicon glyphicon-eye-open">  </span>
+{% endif %}
+{% endif %}
+
+{% with exercice.id|stringformat:"s" as ex_id %}
+{% if 'exobase.see_exercice_'|add:ex_id in perms %}
+
+<span class="pull-right">		
+ <form method="post" action="{% url 'exercice_add_to_folder' exercice_id=exercice.id %}" style="margin: 0">{% csrf_token %}
+    <input  id="add_box" type="number" name="add_ex_box"  placeholder="Add..." style="width: 100px">
+    <button id="number_submit" type="submit" >+</button>
+</form>
+</span>
+
+
+{% endif %}
+{% endwith %}
+</div>
+
+
+{% with exercice.id|stringformat:"s" as ex_id %}
+{% if 'exobase.see_exercice_'|add:ex_id in perms %}
+
+<div class="">
+<div class="title hider"> {{ exercice.name }}   </div>
+<div class="wrapper">
+<div class="contenthider">
+
+ <div class="description">
+<p> {{ exercice.description }} </p>
+</div> 
+  <div class="metadata"> {% metadata exercice %} </div>
+  <ul class="tags">
+{% for tag in exercice.tags.all %}
+<li><a href="{% url 'exo_list'  tag_slug=tag.slug %}" class="tag"> {{ tag }}</a></li>
+{% endfor %}
+</ul>
+</div>
+</div>
+
+ </div>
+ 
+
+ {% if exercice.enonce_html %}
+  <div class="exo">
+ 
   <div>
-                {{ exercice.enonce_text|safe }}
+                {{ exercice.enonce_html|safe }}
+  </div>
   </div>
   
+ {% endif %}
+ 
+  {% if exercice.figure %}
+    <div class="exo">
   
+                 {{ exercice.figure|safe }}
+   </div>
+ 
+  {% endif %}
+  
+  {% if exercice.indication_html %}
+  
+  <div class="indication">
+  <div class="hider">Besoin d'aide ?</div>
 
-<h3>Correction : </h3>
-  <div>
-<p>
-                {{ exercice.corrige_text }}
-
-</p>      
+<div class="wrapper"> 
+<div class="contenthider">
+<div class="text">
+  {{ exercice.indication_html|safe }}
+  </div>
 </div>
-<h3>Tags : </h3> 
-<div>
-<p> 
-{% for tag in exercice.tags.all %}
-<a href="{% url 'exo_list'  tag_slug=tag.slug %}"> {{ tag }}</a>, 
+</div>
+</div>
+  {% endif %}
+  
+  <div class="entete"></div>
+{% if 'exobase.add_solution' in perms %}
+  <a class="btn btn-default pull-left" href="{% url 'exercice_add_solution' exercice_id=exercice.id %}"><span class="glyphicon glyphicon-question-sign">+</span></a>
+{% endif %}
+ {% block solution %}
+ 
+ {% endblock %}
+
+{% if exercice.solution_set %}
+{% for solution in exercice.solution_set.all %}
+
+{% with solution.id|stringformat:"s" as sol_id %}
+{% if 'exobase.see_solution_'|add:sol_id in perms %}
+
+<div class="solution">
+<button class="accordion title"> Solution #{{ solution.id }} <span class="pull-right">{% metadata solution %}</span> </button>
+<div class="panel2"> 
+
+<kbd>#{{ solution.id }}</kbd>
+{% if user == solution.author %}
+<a class="btn btn-default" href="{% url 'solution_edit' pk=solution.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+<a class="btn btn-default" href="{% url 'solution_delete' pk=solution.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+{% endif %}
+<span style="font-size:16px;cursor:pointer" onclick=" "> 
+{% if solution|sol_visible_by_group:'PUBLIC' %}
+ <span class="label label-success glyphicon glyphicon-eye-open">  </span>
+{% else %}
+ <span class="label label-warning glyphicon glyphicon-eye-open">  </span>
+{% endif %}
+</span>
+
+
+<div class="text">
+{{ solution.enonce_html|safe }}
+</div>
+
+
+</div>
+</div>
+{% endif %}
+{% endwith %}
+
 {% endfor %}
-</p>
+{% endif %}
+
+<script>
+function openNav() {
+    document.getElementById("mySidenav").style.width = "200px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0px";
+}
+
+function togNav() {
+	  var nav = document.getElementById("mySidenav");
+	  if (nav.style.width == '200px') {
+	    nav.style.width = '0';
+	    nav.style.opacity = 0;
+	  } else {
+	    nav.style.width = "200px";
+	    nav.style.opacity = 1;
+	  }
+	}
+	
+function UserSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+function GroupSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput2");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL2");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  }
+}
+</script>
+
+{% else %}
+<p> Vous n'avez pas l'autorisation pour voir cet exercice </p>
+{% endif %}
+{% endwith %}
+
+
+
 </div>
 </div>
+</div>
+
+
 {% endblock %}

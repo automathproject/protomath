@@ -1,16 +1,30 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Exercice, Folder
+from .models import Exercice, Folder, Profile, Classe
 from django.contrib.auth.forms import AuthenticationForm 
+from exobase.models import Solution
+
+class ProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['bio','organization','birth_date','work','website','avatar']
+        labels = {'work': 'Statut'}
 
 class ExoForm(forms.ModelForm):
     
     class Meta:
         model = Exercice
-        fields = ['enonce_text','corrige_text','tags']
+        fields = ['name','visibility','description','enonce_latex','indication_latex','macro','image','figure','tags']
         labels = {
-                  'enonce_text': 'énoncé',
-                  'corrige_text': 'corrigé',
+                  'name': 'Nom de l\'exercice',
+                  'visibility': 'Visibilité',
+                  'description': 'Description',
+                  'enonce_latex': 'Enoncé en LaTeX',
+                  'indication_latex': 'Indications en LaTeX',
+                  'macro': 'Sélectionner un fichier de macros LaTeX',
+                  'image': 'Envoyer une image',
+                  'figure': 'Envoyer une iframe de figure',
                   'tags': 'tags',
         }
 
@@ -19,13 +33,20 @@ class ExoSearch(forms.Form):
 
 class ExoSearch2(forms.Form):
     my_tag = forms.CharField(label='tag d\'exercice')
+
+class ExerciceAddSolution(forms.ModelForm):
+    
+    class Meta:
+        model = Solution
+        fields = ['enonce_latex','visibility',]
+        labels = {'enonce_latex': 'Enoncé en LaTeX','visibility': 'Visibilité',}
     
 class FolderForm(forms.ModelForm):
     
     class Meta:
         model = Folder
-        fields = ['name']
-        labels = {'name': 'nom',
+        fields = ['name','description',]
+        labels = {'name': 'Nom du dossier', 'description': 'Description',
                   }
     
 class FolderAddExercice(forms.Form):
@@ -43,7 +64,22 @@ class ExerciceAddToFolder(forms.Form):
 class FolderForm2(forms.Form):
     name = forms.CharField(max_length=20)
     exercices = forms.ModelMultipleChoiceField(queryset=Exercice.objects.all())
+
+class ClassForm(forms.ModelForm):
     
+    class Meta:
+        model = Classe
+        fields = ('name','description',)
+        
+class ClassAddEleve(forms.Form):
+    my_eleves = forms.CharField(label='identifiants d\'eleves',help_text='entrer un login ou une liste de login séparés par une virgule')
+
+    def clean_my_eleves(self):
+        data = self.cleaned_data['my_eleves']    
+        data = data.replace(';',',').replace(' ',',').split(',')
+        data = [str(x) for x in data]   
+        return data
+
 class ConnexionForm(forms.Form):
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
@@ -52,6 +88,11 @@ class NewUser(forms.ModelForm):
     class Meta:
         model=User
         fields=('username','password',)
+        
+class NewUser2(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=('username','first_name','last_name','email')
         
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", max_length=30, 

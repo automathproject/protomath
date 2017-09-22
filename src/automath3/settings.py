@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'exobase',
+    'exobase.templatetags',
     'taggit',
     'django.contrib.admin',
     'django.contrib.auth',
