@@ -1,0 +1,12 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+{% if tag %}
+Résultats de la recherche du tag "{{ tag }}"
+{% endif %}
+
+
+{% include 'exobase/list.html' %}
+
+{% endblock %}
+ 

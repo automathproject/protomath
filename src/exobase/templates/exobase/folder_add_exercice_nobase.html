@@ -1,0 +1,5 @@
+    <h3>Ajouter des des exercices au dossier {{ folder.id }}</h3>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>

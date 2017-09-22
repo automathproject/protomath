@@ -1,0 +1,15 @@
+{% extends 'exobase/detail.html' %}
+
+
+{% block solution %}
+<div class="container-fluid">
+    <div class="title">Ajouter une solution </div>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+   </div>
+   
+   
+   
+{% endblock %}

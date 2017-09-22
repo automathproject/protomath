@@ -1,0 +1,38 @@
+{% extends 'exobase/base.html' %}
+{% load static %}
+
+{% load exobase_extras %}
+
+
+{% block content %}
+<div class="container">
+
+
+<div  align="center"> <img alt="User Pic" src="{% static 'exobase/avatar_defaut.png' %}" id="profile-image1" class="img-circle img-responsive"> 
+
+{% if profile.avatar %}
+<div  align="center"> <img  alt="User Pic" src="{{ profile.avatar.url  }}" id="profile-image1"> </div>
+{% endif %}
+
+<div class='title'> Identifiant : </div> <span> {{ profile.user.username }}</span>
+<a class="btn btn-default" href="{% url 'profile_edit' %}"><span class="glyphicon glyphicon-pencil"></span></a>
+
+<div class='title'> Nom : </div> <span> {{ profile.user.first_name }} {{ profile.user.last_name }}</span>
+
+<div class='title'> Email : </div> <span> {{ profile.user.email }} </span>
+
+<div class='title'> Etablissement : </div> <span> {{ profile.organization }} </span>
+
+
+<div class='title'> Statut : </div> <span> {{ profile.get_work_display }} </span>
+
+{% if profile.user|has_group:'PROFS' %}
+<div class='title'>
+Vous avez les droits d'édition.
+</div>
+{% endif %}
+
+</div>
+</div>
+{% endblock %}
+

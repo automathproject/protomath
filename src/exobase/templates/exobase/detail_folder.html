@@ -1,0 +1,182 @@
+{% extends 'exobase/base.html' %}
+{% load exobase_extras %}
+
+{% block content %}
+
+<div class="container detail_folder">
+
+
+
+<div data-spy="scroll" data-target="#folder_nav" data-offset="0" class="scrollspy-folder">
+
+<div id="tabs-0" class="folder">
+
+<div class="title"><span class="glyphicon glyphicon-folder-open"></span> {{ folder.name }} {% if user.is_authenticated %}
+<a href="{% url 'folder_edit' pk=folder.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+{% endif %}</div>
+<div class="metadata">{% metadata folder %}</div>
+<a href="{% url 'resume_folder' folder_id=folder.id %}" ><span class="pull-right glyphicon glyphicon-menu-up"> </span> </a>
+
+<div class="description">
+{{ folder.description }}
+</div> 
+{% if order_ex_list %}	
+{% else %}
+<h3>Ce dossier est vide !</h3>
+{% endif %}
+</div>
+
+{% for i in order_ex_list %}
+{% with i.0 as exercice %}
+
+<div id="tabs-{{ i.1 }}" class="exercice in_folder">
+
+<div class="entete">
+<a href="{% url 'detail'  exercice_id=exercice.id %}"> <kbd>#{{ exercice.id }}</kbd> </a>
+{% if user == exercice.author %}
+<a class="btn btn-default" href="{% url 'post_edit' pk=exercice.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+{% endif %}
+<span style="font-size:16px;cursor:pointer" onclick=""> {% if exercice|visible_by_group:'PUBLIC' %}
+ <span class="label label-success glyphicon glyphicon-eye-open"> </span>
+{% else %}
+ <span class="label label-warning glyphicon glyphicon-eye-open"> </span>
+
+{% endif %}</span>
+
+{% if user == folder.author %}
+			<span class="pull-right">		
+			<form action="{% url 'delete_exercice_folder' exercice_id=i.0.id folder_id=folder.id %}" method="POST">{% csrf_token %}
+  	<button type="submit" class="btn btn-warning btn-xs">Retirer du dossier</button>
+		</form></span>
+{% endif %}
+
+{% with exercice.id|stringformat:"s" as ex_id %}
+{% if 'exobase.see_exercice_'|add:ex_id in perms %}
+
+
+{% endif %}
+{% endwith %}
+</div>
+
+
+{% with exercice.id|stringformat:"s" as ex_id %}
+{% if 'exobase.see_exercice_'|add:ex_id in perms %}
+
+<div class="title"> {{ exercice.name }}  
+
+ </div>
+  <div class="metadata"> {% metadata exercice %} </div>
+ 
+<div class="description">
+{{ exercice.description }}
+</div> 
+
+ <ul class="tags">
+{% for tag in exercice.tags.all %}
+<li><a href="{% url 'exo_list'  tag_slug=tag.slug %}" class="tag"> {{ tag }}</a></li>
+{% endfor %}
+</ul>
+ 
+ 
+ 
+
+ {% if exercice.enonce_html %}
+  <div class="exo">
+ 
+  <div>
+                {{ exercice.enonce_html|safe }}
+  </div>
+  </div>
+  
+ {% endif %}
+ 
+  {% if exercice.figure %}
+    <div class="exo">
+  
+                 {{ exercice.figure|safe }}
+   </div>
+ 
+  {% endif %}
+{% if exercice.solution_set %}
+{% for solution in exercice.solution_set.all %}
+
+{% with solution.id|stringformat:"s" as sol_id %}
+{% if 'exobase.see_solution_'|add:sol_id in perms %}
+
+<div class="solution">
+
+<div class="title hider">Solution</div>
+
+<div class="wrapper"> 
+<div class="contenthider">
+<div class="">
+<kbd>#{{ solution.id }}</kbd>
+{% if user == solution.author %}
+<a class="btn btn-default" href="{% url 'solution_edit' pk=solution.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+{% endif %}
+<span style="font-size:16px;cursor:pointer" onclick=" "> 
+{% if solution|sol_visible_by_group:'PUBLIC' %}
+ <span class="label label-success glyphicon glyphicon-eye-open"> public </span>
+{% else %}
+ <span class="label label-warning glyphicon glyphicon-eye-open"> limité </span>
+{% endif %}
+</span>
+
+
+
+
+</div>
+
+<div class="metadata">{% metadata solution %}</div>
+<div>
+{{ solution.enonce_html|safe }}
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+{% endwith %}
+
+{% endfor %}
+{% endif %}
+
+
+
+{% else %}
+<p> Vous n'avez pas l'autorisation pour voir cet exercice </p>
+{% endif %}
+{% endwith %}
+
+
+
+
+
+
+
+</div>
+
+{% endwith %}
+{% endfor %}
+
+				{% if messages %} {% for message in messages %}
+				<div id="error_message">
+					<div class="alert alert-warning alert-dismissable fade in">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+						{{ message }}
+					</div>
+				</div>
+				{% endfor %} {% endif %} 
+
+<div id="tabs-{{ numbermaxplusun }}" class="folder">
+<div class="title">Ajouter des exercices    </div>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+
+</div>
+
+
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+{% if order_ex_list2 %}
+
+ <div class="panel panel-default">
+<div class="panel-heading"> 
+<h2> <a href="{% url 'folder_detail' folder_id=folder.id %}">  <span class="glyphicon glyphicon-folder-open"></span></a> {{ folder.name }}</h2>
+Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub_date|date:"D d M Y" }}
+ </div>
+    <ul class="list-group">
+    
+    {% for o in orderfolder_list %}
+        <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  <kbd>{{ o.exercice.id }}</kbd> 
+        
+			<span class="pull-right">		
+			<form action="{% url 'delete_exercice_folder' exercice_id=o.exercice.id folder_id=folder.id %}" method="POST">{% csrf_token %}
+  	<button type="submit" class="btn btn-warning btn-xs">Retirer du dossier</button>
+		</form>
+		</span> 
+		<span>
+  			<a href="{% url 'detail'  exercice_id=o.exercice.id %}" class="btn btn-primary btn-xs" role="button"  >Open</a>
+			</span>
+  			<span>
+  			<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal-{{ o.exercice.id }}">Preview</button>
+			</span>
+
+ 			 <!-- Modal -->
+ 				 <div class="modal fade" id="myModal-{{ o.exercice.id }}" role="dialog">
+    				<div class="modal-dialog modal-lg">
+    
+      				<!-- Modal content-->
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">Exercice <mark>{{ o.exercice.id }}</mark></h4>
+        				</div>
+        				<div class="modal-body">
+          				{{ o.exercice.enonce_text|safe }}
+        				</div>
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>
+
+        </li>
+    {% endfor %}
+    <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  			<span>
+  			<button type="button" class="btn btn-success btn-md" data-toggle="modal" data-target="#addExercice"><span class="glyphicon glyphicon-plus"></span> add</button>
+			</span>
+    </li>
+    </ul>
+ </div>
+ 
+ <div class="modal fade" id="addExercice" role="dialog">
+    				<div class="modal-dialog">
+    
+      				<!-- Modal content-->
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+     <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>
+ </div>
+ 
+ 
+{% else %}
+ <div class="panel panel-default">
+<div class="panel-heading"> 
+<h2> <a href="{% url 'folder_detail' folder_id=folder.id %}">  <span class="glyphicon glyphicon-folder-open"></span></a> {{ folder.name }}</h2>
+Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub_date|date:"D d M Y" }}
+ </div>
+</div>
+    <div class="well">Ce dossier est vide !</div>
+{% endif %}
+
+</div>
+{% endblock %}

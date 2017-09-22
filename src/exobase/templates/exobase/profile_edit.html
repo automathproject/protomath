@@ -1,0 +1,12 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="title">Nouveau profil #{{ profile.id }}</div>
+    <form method="POST" class="post-form">{% csrf_token %}
+    	{{ form2 }}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+ </div>
+{% endblock %}

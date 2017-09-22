@@ -1,0 +1,10 @@
+{% extends 'exobase/base.html' %}
+
+{% block solution %}
+<h3> Solution</h3>
+ <p> Auteur :   {{ solution.author.username }} ; Dernière modification : {{ solution.pub_date|date:"D d M Y" }} </p>
+<div>
+{{ solution.enonce_html|safe }}
+</div>
+
+{% endblock %}

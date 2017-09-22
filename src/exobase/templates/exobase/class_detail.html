@@ -1,0 +1,64 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+
+<div class="title"> <span class="glyphicon glyphicon-education"></span> {{ classe.name }}</div>
+
+<div class="description"> Enseignants : {% for prof in profs_in_classe %} {{ prof }}, {% endfor %} </div>
+{% if eleves_in_classe %}
+
+<table id="tabsearch" class="display tableresponsive" width = "100%" cellspacing = "0">
+<thead>
+	<tr>
+		<th> #Id </th>
+		<th> identifiant </th>
+		<th> Prénom </th>
+		<th> Nom </th>
+		<th> Statut </th>
+		<th> action </th>
+	</tr>
+</thead>
+<tfoot>
+	<tr>
+		<th> #Id </th>
+		<th> identifiant </th>
+		<th> Prénom </th>
+		<th> Nom </th>
+		<th> Statut </th>
+		<th> action </th>
+	</tr>
+</tfoot>
+<tbody>
+    {% for eleve in eleves_in_classe %}
+	<tr> 
+		<td> <kbd>#{{ eleve.pk }} </kbd></td>
+		<td> {{ eleve.username }} </td>
+		<td> {{ eleve.first_name }} </td>
+		<td> {{ eleve.last_name }} </td>
+		<td> {{ eleve.profile.get_work_display }} </td>
+		<td> 
+		{% with classe.id|stringformat:"s" as classe_id %}
+		{% if 'exobase.edit_class_'|add:classe_id in perms %}
+		
+		<a class="btn btn-default" href="{% url 'delete_eleve_classe' classe_id=classe.pk eleve_id=eleve.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+		{% endif %}
+		{% endwith %}
+		</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+{% endif %}
+
+		{% with classe.id|stringformat:"s" as classe_id %}
+		{% if 'exobase.edit_class_'|add:classe_id in perms %}
+
+    <h1>Ajouter des élèves </h1>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+		{% endif %}
+		{% endwith %}    
+{% endblock %}
