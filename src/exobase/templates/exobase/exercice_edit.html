@@ -1,9 +1,25 @@
 {% extends 'exobase/base.html' %}
+{% block title %} Nouvel exercice {% endblock %}
 
-{% block content %}
+<!-- 
     <h1>Nouvel exercice {{ exercice.id }}</h1>
     <form method="POST" class="post-form">{% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>
     </form>
+ -->
+
+{% block content %}
+<div class="container-fluid">
+<div class="row">
+        <div class="col-md-6 col-md-offset-3">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include 'exobase/includes/form.html' %}
+    <button type="submit" class="btn btn-success btn-block">Enregistrer l'exercice</button>
+  </form>
+</div>
+</div>
+</div>
+
 {% endblock %}

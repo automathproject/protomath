@@ -2,13 +2,13 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Exercice, Folder, Profile, Classe
 from django.contrib.auth.forms import AuthenticationForm 
-from exobase.models import Solution
+from exobase.models import Solution, MacroLatex
 
 class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['bio','organization','birth_date','work','website','avatar']
+        fields = ['bio','organization','birth_date','work','website']
         labels = {'work': 'Statut'}
 
 class ExoForm(forms.ModelForm):
@@ -40,7 +40,13 @@ class ExerciceAddSolution(forms.ModelForm):
         model = Solution
         fields = ['enonce_latex','visibility',]
         labels = {'enonce_latex': 'Enoncé en LaTeX','visibility': 'Visibilité',}
+
+class MacroForm(forms.ModelForm):
     
+    class Meta:
+        model = MacroLatex
+        fields = ['name','description','macro']
+
 class FolderForm(forms.ModelForm):
     
     class Meta:
@@ -79,6 +85,9 @@ class ClassAddEleve(forms.Form):
         data = data.replace(';',',').replace(' ',',').split(',')
         data = [str(x) for x in data]   
         return data
+
+class ClassAddFolder(forms.Form):
+    my_folder = forms.IntegerField(label='numéro de dossier',help_text='entrer un numéro identifiant de dossier')
 
 class ConnexionForm(forms.Form):
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)

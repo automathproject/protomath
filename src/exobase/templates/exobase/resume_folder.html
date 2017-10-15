@@ -1,5 +1,5 @@
 {% extends 'exobase/base.html' %}
-
+{% block title %} OYM - {{ folder.name }} {% endblock %}
 {% block content %}
 
 <div class="container">
@@ -10,7 +10,9 @@
 <div class="panel-heading"> 
 <h2> <a href="{% url 'folder_detail' folder_id=folder.id %}">  <span class="glyphicon glyphicon-folder-open"></span></a> {{ folder.name }}</h2>
 Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub_date|date:"D d M Y" }}
+<a href="{% url 'folder_detail' folder_id=folder.id %}" ><span class="pull-right glyphicon glyphicon-menu-down"> </span> </a>
  </div>
+ 
     <ul class="list-group">
     
     {% for o in orderfolder_list %}
@@ -39,7 +41,7 @@ Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub
           					<h4 class="modal-title">Exercice <mark>{{ o.exercice.id }}</mark></h4>
         				</div>
         				<div class="modal-body">
-          				{{ o.exercice.enonce_text|safe }}
+          				{{ o.exercice.enonce_html|safe }}
         				</div>
         				<div class="modal-footer">
           				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -52,7 +54,7 @@ Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub
         </li>
     {% endfor %}
     <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  			<span>
-  			<button type="button" class="btn btn-success btn-md" data-toggle="modal" data-target="#addExercice"><span class="glyphicon glyphicon-plus"></span> add</button>
+  			<button type="button" class="btn btn-success btn-md" data-toggle="modal" data-target="#addExercice"><span class="glyphicon glyphicon-plus"></span> Ajouter un exercice</button>
 			</span>
     </li>
     </ul>
@@ -78,6 +80,16 @@ Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub
   				</div>
  </div>
  
+ <div> Partagé avec les classes :
+ <div class="shortlist">
+<ul id="myUL" class="myshortlist" >
+{% for n in classe_list %}
+<li><a href="#"> #{{ n.0 }} {{ n.1 }} </a></li>
+{% endfor %}
+</ul>
+</div>
+<input type="text" id="myInput" class="listsearch" onkeyup="GroupSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+ </div>
  
 {% else %}
  <div class="panel panel-default">
@@ -90,4 +102,25 @@ Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub
 {% endif %}
 
 </div>
+
+<script>
+function GroupSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+</script>
+
 {% endblock %}

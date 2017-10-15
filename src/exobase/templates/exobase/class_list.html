@@ -11,7 +11,7 @@ Vous avez {{ class_list.count }} classes.
 	<tr>
 		<th> #Id </th>
 		<th> Nom </th>
-		<th> Année </th>
+		<th> Professeurs </th>
 		<th> Description </th>
 		<th> Nombre d'élèves </th>
 		<th> Action </th>
@@ -21,7 +21,7 @@ Vous avez {{ class_list.count }} classes.
 	<tr>
 		<th> #Id </th>
 		<th> Nom </th>
-		<th> Année </th>
+		<th> Professeurs </th>
 		<th> Description </th>
 		<th> Nombre d'élèves </th>
 		<th> Action </th>
@@ -32,7 +32,7 @@ Vous avez {{ class_list.count }} classes.
 	<tr>
 	<td> {{ classe.pk }}  </td>
 	<td> {{ classe.name }}  </td>
-	<td> {{ classe.year }}  </td>
+	<td> {% for i in classe.professeurs.all %} {{ i.first_name }} {{ i.last_name }}, {% endfor %} </td>
 	<td> {{ classe.description }}  </td>
 	<td> {{ classe.eleves.count }}  </td>
 	<td> <a href="{% url 'classe_detail'  pk=classe.id %}" class="btn btn-primary btn-xs" role="button"  >Open</a> </td>

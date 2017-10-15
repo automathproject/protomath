@@ -17,6 +17,7 @@
 
 html, body {
 	height: 100%;	
+	font-family: 'Open Sans', sans-serif;	font-size: 16px;
 }
 
 .home0 {
@@ -42,10 +43,21 @@ th, td {
 .navbar {
 	padding: 5px 5px;
     background-color: #ADA;
-    font-size: 24px;
+	font-family: 'Overlock', cursive;
+    font-size: 18px;
     border-bottom: 6px solid #197367;
     opacity: 0.9;
 }
+
+.navbar-nav {
+font-family: 'Overlock', cursive;  font-size:18pt;
+}
+
+.navbar-brand {
+font-family: 'Overlock', cursive;  font-size:24pt;
+}
+
+
 
 .navbar a:hover {
       color: #197367 !important;
@@ -55,6 +67,7 @@ th, td {
 .open .dropdown-toggle {
       color: #197367;
       background-color: #fff !important;
+      font-size:18pt;
 }
 .metadata{
 	color: #197367;
@@ -69,7 +82,7 @@ th, td {
 .entete{
 	height: 50px;
 	padding: 5px;
-    border-bottom: 6px solid #197367;
+    border-bottom: 3px solid #197367;
 }
 
 #profile-image1 {
@@ -81,12 +94,29 @@ th, td {
 	.tital{ font-size:16px; font-weight:500;}
 	 .bot-border{ border-bottom:1px #f8f8f8 solid;  margin:5px 0  5px 0}	
 
+.profile{
+	background-color: #333;
+	color: #FFF;
+	padding: 20px;
+}
+
+.profile .title2{
+	color: #FFF;
+	font-family: 'Overlock', cursive;  font-size:18pt; font-weight: bold;
+  padding: 5px;}
+
+
 .exo{
 	padding: 15px;
-    border: 5px solid grey;	
+    border: 2px solid grey;	
     background-color: #E3FED7;
     margin-bottom: 10px;
     margin-top: 10px;
+}
+
+.latex{
+	font-family: 'Inconsolata', monospace;
+	font-size: 12px;
 }
 
 .solution{
@@ -112,14 +142,13 @@ th, td {
 }
 
 .title {
-  font-family:'Dekko';
-  font-size:24pt;
+font-family: 'Overlock', cursive;  font-size:24pt;
   padding: 5px;
   text-transform: uppercase;
 }
 
 .exercice{
-	border-radius: 10px;
+	border-radius: 0px;
 	padding: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 	margin: 5px;
@@ -154,7 +183,7 @@ th, td {
 
 .detail_folder{
 	margin-top: 0px;
-	max-width: 800px
+	max-width: 1000px
 }
 
 .scrollspy-folder {
@@ -165,9 +194,12 @@ margin-bottom: 10px;
 overflow: auto;
 padding-bottom:10px;
 padding-top: 10px;
-background-color: eeeeee;
+background-color: #fff;
 }
 
+.background-folder {
+background-color: #fff;
+}
 
 
 
@@ -311,7 +343,7 @@ tfoot input {
     width: 0;
     position: fixed;
     z-index: 1;
-    top: 50;
+    top: 80;
     right: 0;
     background-color: #ADA;
     overflow-x: hidden;

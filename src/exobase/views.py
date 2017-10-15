@@ -12,9 +12,10 @@ import operator
 import pypandoc
 from functools import reduce
 #from django.core.urlresolvers import reverse
-from exobase.models import Exercice, Folder, OrderFolder, Solution, Profile, Classe
+from exobase.models import Exercice, Folder, OrderFolder, Solution, Profile, Classe,\
+    MacroLatex
 from exobase.forms import ExoForm, ExoSearch, ExoSearch2, NewUser, FolderForm, FolderAddExercice, ExerciceAddSolution, ProfileForm,\
-    NewUser2, ClassForm, ClassAddEleve
+    NewUser2, ClassForm, ClassAddEleve, MacroForm, ClassAddFolder
 
 from taggit.models import Tag 
 from django.contrib.contenttypes.models import ContentType
@@ -42,11 +43,14 @@ def profile_edit(request):
             user.groups.add(group)
             profile.save()
             form.save_m2m()
-            if form2.is_valid():
-                user = form2.save(commit=False)
-                user.save()
-                form2.save_m2m()
-                return redirect('profile')
+            test1 = True
+        if form2.is_valid():
+            user = form2.save(commit=False)
+            user.save()
+            form2.save_m2m()
+            test2 = True
+        if test1 == True or test2 == True:
+            return redirect('profile')
     else:
         form = ProfileForm(instance=profile)
         form2 = NewUser2(instance = user)
@@ -54,8 +58,15 @@ def profile_edit(request):
 
 def profile(request):
     user = request.user
-    profile = get_object_or_404(Profile, pk=user.pk) 
-    return render(request, 'exobase/profile.html', {'profile': profile })
+    profile = get_object_or_404(Profile, pk=user.pk)
+    folder_list = user.folder_set.values('id','name','pub_date')
+    PROFS = Group.objects.get(name='PROFS')
+    if PROFS in user.groups.all():
+        classe_list = Classe.objects.filter(professeurs=user).values('id','name')
+    else:
+        classe_list = Classe.objects.filter(eleves=user).values('id','name')
+    latest_exercices = user.exercice_set.order_by('-pub_date')[:10]
+    return render(request, 'exobase/profile.html', {'profile': profile, 'folder_list': folder_list, 'latest_exercices': latest_exercices, 'classe_list': classe_list, })
 
 def detail(request, exercice_id):
     exercice = get_object_or_404(Exercice, pk=exercice_id)
@@ -381,6 +392,32 @@ def solution_delete(request,pk):
         messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé à supprimer cette solution')
     return redirect('detail', exercice_id = exercice_id)     
 
+def macro_new(request):
+    if request.method == "POST":
+        form = MacroForm(request.POST)
+        if form.is_valid():
+            macrolatex = form.save(commit=False)
+            macrolatex.save()
+            form.save_m2m()
+            return redirect('index')
+    else:
+        form = MacroForm()
+    return render(request, 'exobase/macro_edit.html', {'form': form,})   
+
+def macro_edit(request,pk):
+    macrolatex = get_object_or_404(MacroLatex,pk=pk)
+    if request.method == "POST":
+        form = MacroForm(request.POST,instance = macrolatex)
+        if form.is_valid():
+            macrolatex = form.save(commit=False)
+            macrolatex.save()
+            form.save_m2m()
+            return redirect('index')
+    else:
+        form = MacroForm(instance = macrolatex)
+    return render(request, 'exobase/macro_edit.html', {'form': form,})   
+
+
 @permission_required('exobase.add_folder')
 def folder_new(request):
     if request.method == "POST":
@@ -417,6 +454,11 @@ def folder_list(request):
 
 @permission_required('exobase.change_folder')
 def folder_edit(request, pk):
+    user = request.user
+    perm = 'exobase.edit_folder_{0}'.format(pk)
+    if not user.has_perm(perm):
+        messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cet dossier')
+        return redirect('folder_detail', folder_id=pk)
     folder = get_object_or_404(Folder, pk=pk)
     if request.method == "POST":
         form = FolderForm(request.POST, instance=folder)
@@ -425,13 +467,14 @@ def folder_edit(request, pk):
             folder.pub_date = timezone.now()
             folder.save()
             form.save_m2m()
-            return redirect('folder_detail', folder_id=folder.pk)
+            return redirect('folder_detail', folder_id=pk)
     else:
         form = FolderForm(instance=folder)
     return render(request, 'exobase/folder_edit.html', {'form': form, 'folder': folder})   
 
 
 def detail_folder(request, folder_id):
+    user = request.user
     folder = get_object_or_404(Folder, pk=folder_id)
     exercice_in_folder = folder.exercices.all()
     order_ex_list = []
@@ -451,6 +494,10 @@ def detail_folder(request, folder_id):
     numbermaxplusun = numbermax + 1
     if request.method == "POST":
         form = FolderAddExercice(request.POST)
+        perm = 'exobase.edit_folder_{0}'.format(folder_id)
+        if not user.has_perm(perm):
+            messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cet dossier')
+            return redirect('folder_detail', folder_id=folder_id)
         if form.is_valid():
             my_exercices = form.cleaned_data['my_exercices']
             number=numbermaxplusun
@@ -473,6 +520,10 @@ def detail_folder(request, folder_id):
 def resume_folder(request, folder_id):
     folder = get_object_or_404(Folder, pk=folder_id)
     exercice_in_folder = folder.exercices.all()
+    perm_codename = 'see_folder_{0}'.format(folder_id)
+    perm =  get_object_or_404(Permission,codename=perm_codename)
+    group_list = Group.objects.filter(permissions=perm).values_list('name',flat=True)
+    classe_list = Classe.objects.filter(name__in=group_list).values_list('id','name')
     order_ex_list = []
     id_list = []
     for e in exercice_in_folder:
@@ -501,22 +552,27 @@ def resume_folder(request, folder_id):
                         o.save()
                         number = number +1
                     else:
-                        messages.add_message(request, messages.WARNING, u'Cet exercice est déjà dans le dossier')
+                        messages.add_message(request, messages.WARNING, u'L\'exercice {0} est déjà dans le dossier'.format(str(ex_id)))
                 else:
                     messages.add_message(request, messages.WARNING, u'L\'exercice {0} n\'existe pas'.format(str(ex_id)))
             return redirect('resume_folder',folder_id=folder.pk)
     else:
         form = FolderAddExercice()    
-    return render(request, 'exobase/resume_folder.html', {'folder': folder , 'orderfolder_list': orderfolder_list, 'order_ex_list2': order_ex_list, 'form': form, 'numbermaxplusun': numbermaxplusun})
+    return render(request, 'exobase/resume_folder.html', {'folder': folder , 'orderfolder_list': orderfolder_list, 'order_ex_list2': order_ex_list, 'form': form, 'numbermaxplusun': numbermaxplusun, 'classe_list': classe_list})
 
 
 
 @login_required(redirect_field_name='exobase/login/')
 def delete_exercice_folder(request,folder_id,exercice_id):
+    user = request.user
     folder = get_object_or_404(Folder, pk=folder_id)
     exercice = get_object_or_404(Exercice, pk=exercice_id)
     orderfolder = get_object_or_404(OrderFolder, folder = folder, exercice = exercice)
     if request.method == "POST":
+        perm = 'exobase.edit_folder_{0}'.format(folder_id)
+        if not user.has_perm(perm):
+            messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cet dossier')
+            return redirect('folder_detail', folder_id=folder_id)
         orderfolder.delete()
         orderfolder_list = OrderFolder.objects.filter(folder = folder)
         n=1
@@ -529,6 +585,7 @@ def delete_exercice_folder(request,folder_id,exercice_id):
 #inutile car la fonctionnalité existe déjà dans la vue detail_folder
 @permission_required('exobase.change_folder')
 def folder_add_exercice(request,pk):
+    user = request.user
     folder = get_object_or_404(Folder, pk=pk)
     exercice_in_folder = folder.exercices.all()
     id_list = []
@@ -545,6 +602,10 @@ def folder_add_exercice(request,pk):
     if request.method == "POST":
         form = FolderAddExercice(request.POST)
         if form.is_valid():
+            perm = 'exobase.edit_folder_{0}'.format(pk)
+            if not user.has_perm(perm):
+                messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cet dossier')
+                return redirect('folder_detail', folder_id=pk)
             my_exercices = form.cleaned_data['my_exercices']
             number=numbermax+1
             for ex_id in my_exercices:
@@ -557,7 +618,7 @@ def folder_add_exercice(request,pk):
                     else:
                         messages.add_message(request, messages.WARNING, u'Cet exercice est déjà dans le dossier')
                 else:
-                    messages.add_message(request, messages.WARNING, u'L\'exercice {0} n\'existe pas ou ne vous appartient pas.'.format(str(ex_id)))
+                    messages.add_message(request, messages.WARNING, u'L\'exercice {0} n\'existe pas.'.format(str(ex_id)))
             return redirect('folder_detail',folder_id=folder.pk)
     else:
         form = FolderAddExercice()
@@ -598,7 +659,7 @@ def exercice_add_to_folder(request,exercice_id):
             return redirect('detail', exercice_id=exercice_id)
     return redirect('folder_detail',folder_id=folder.pk)
 
-@permission_required('exobase.edit_exercice')
+@permission_required('exobase.change_exercice')
 def ex_add_reader(request,exercice_id):
     if request.method == "POST":
         form = request.POST.get('add_reader_box')    
@@ -615,7 +676,7 @@ def ex_add_reader(request,exercice_id):
             messages.add_message(request, messages.WARNING, u'Veuillez entrer un nom d\'utilisateur')
     return redirect('detail', exercice_id=exercice_id)
 
-@permission_required('exobase.edit_exercice')
+@permission_required('exobase.change_exercice')
 def ex_add_group(request,exercice_id):
     if request.method == "POST":
         form = request.POST.get('add_group_box')    
@@ -720,10 +781,10 @@ def classe_new(request):
 
 @permission_required('exobase.change_classe')
 def classe_edit(request, pk):
+    classe = get_object_or_404(Classe, pk=pk)
     if request.method == "POST":
         user = request.user
-        classe = get_object_or_404(Classe, pk=pk)
-        classe_id = classe.id
+        classe_id = pk
         user = request.user
         perm = 'exobase.edit_class_{0}'.format(classe_id)
         if not user.has_perm(perm):
@@ -734,10 +795,10 @@ def classe_edit(request, pk):
             if form.is_valid():
                 classe = form.save()
                 classe.save()
-                return redirect('class_detail',pk=classe.pk)
+                return redirect('classe_detail',pk=pk)
     else:
         form = ClassForm(instance = classe)
-    return render(request, 'exobase/classe_edit.html', {'form': form})
+    return render(request, 'exobase/classe_edit.html', {'form': form, 'classe_id': pk})
 
 @permission_required('exobase.delete_classe')
 def classe_delete(request,pk):
@@ -757,13 +818,22 @@ def classe_detail(request,pk):
     classe = Classe.objects.get(pk=pk)
     eleves_in_classe = classe.eleves.all()
     profs_in_classe = classe.professeurs.all()
+    try:
+        groupe = Group.objects.get(name = classe.name)
+        perm_list = groupe.permissions.filter(codename__icontains='see_folder').values_list('codename',flat=True)
+        pk_list = [p[11:] for p in perm_list]
+    except:
+        pk_list = []
+        groupe = Group.objects.create(name = classe.name)
+    folder_list = Folder.objects.filter(id__in=pk_list)
     if request.method == "POST":
         perm = 'exobase.edit_class_{0}'.format(pk) 
         if request.user.has_perm(perm):
             form = ClassAddEleve(request.POST)
+            form2 = ClassAddFolder(request.POST)
         else:
             messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cette classe')
-            redirect('class_detail',pk=pk)
+            redirect('classe_detail',pk=pk)
         if form.is_valid():
             my_eleves = form.cleaned_data['my_eleves']
             perm = Permission.objects.get(codename='see_class_{0}'.format(pk))
@@ -774,10 +844,45 @@ def classe_detail(request,pk):
                     e.user_permissions.add(perm)
                 else:
                     messages.add_message(request, messages.WARNING, u'L\'élève {0} n\'existe pas'.format(eleve))
+        if form2.is_valid():
+            my_folder = form2.cleaned_data['my_folder']
+            if Folder.objects.filter(pk=my_folder).exists():
+                perm = Permission.objects.get(codename='see_folder_{0}'.format(str(my_folder)))
+                groupe.permissions.add(perm)
+            else:
+                messages.add_message(request, messages.WARNING, u'Le dossier {0} n\'existe pas'.format(str(my_folder)))
     else:
         form = ClassAddEleve()
-    return render(request, 'exobase/class_detail.html', {'form': form, 'classe': classe, 'eleves_in_classe': eleves_in_classe, 'profs_in_classe': profs_in_classe})
-              
+        form2 = ClassAddFolder()
+    return render(request, 'exobase/class_detail.html', {'form': form, 'form2': form2, 'classe': classe, 'eleves_in_classe': eleves_in_classe, 'profs_in_classe': profs_in_classe, 'folder_list': folder_list})
+
+@permission_required('exobase.change_classe')
+def classe_add_folder(request,classe_id):
+    if request.method == "POST":
+        form = request.POST.get('add_group_box')    
+        if form:
+            try:
+                pk = int(form)
+            except ValueError:
+                messages.add_message(request, messages.WARNING, u'Un nombre entier est attendu')
+                return redirect('classe_detail', pk=classe_id)
+            if Folder.objects.filter(pk = pk).exists():
+                folder = get_object_or_404(Folder,pk = pk)
+                try:
+                    classe_name = Classe.objects.get(pk = classe_id).name
+                    group = Group.objects.get(name = classe_name)
+                except:
+                    group = Group.objects.create(name = classe_name)
+                perm_name = 'see_folder_{0}'.format(pk)
+                perm = Permission.objects.get(codename=perm_name)
+                group.permissions.add(perm)
+            else:
+                messages.add_message(request, messages.WARNING, u'Ce groupe ou cette classe n\'existe pas')
+        else:
+            messages.add_message(request, messages.WARNING, u'Veuillez entrer un numéro d\'identifiant de classe')
+    return redirect('classe_detail', pk=classe_id)
+
+
 @permission_required('exobase.change_classe')
 def delete_eleve_classe(request,classe_id,eleve_id):
     classe = get_object_or_404(Classe,pk=classe_id)
@@ -788,11 +893,16 @@ def delete_eleve_classe(request,classe_id,eleve_id):
         messages.add_message(request, messages.SUCCESS, u'L\'élève {0} a bien été retiré de cette classe'.format(eleve.username))
     else:
         messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cette classe')
-    return redirect('class_detail',pk=classe_id)
+    return redirect('classe_detail',pk=classe_id)
 
 @login_required(redirect_field_name='exobase/login/')
-def class_list(request):
-    class_list = Classe.objects.filter(professeurs=request.user)
+def classe_list(request):
+    user = request.user
+    PROFS = Group.objects.get(name='PROFS')
+    if PROFS in user.groups.all():
+        class_list = Classe.objects.filter(professeurs=user)
+    else:
+        class_list = Classe.objects.filter(eleves=user)
     return render(request, 'exobase/class_list.html', {'class_list': class_list,})
 
             

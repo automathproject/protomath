@@ -39,7 +39,7 @@ def save_user_profile(sender, instance, **kwargs):
 class MacroLatex(models.Model):
     name = models.CharField(blank=True, max_length=50)
     macro = models.TextField(blank=True)
-
+    description = models.CharField(blank=True, max_length=50)
     def __str__(self):
         return self.name
     

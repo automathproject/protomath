@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<title>automath</title>
+<title>{% block title %} {% endblock %}</title>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -11,7 +11,15 @@
 	href='//fonts.googleapis.com/css?family=Lobster&amp;subset=latin,latin-ext'
 	rel='stylesheet' type='text/css'>
 
+
+<link href="https://fonts.googleapis.com/css?family=Overlock" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+
+
 <link href='https://fonts.googleapis.com/css?family=Dekko' rel='stylesheet' type='text/css'>
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 <link rel="stylesheet" href="{% static 'exobase/style.css' %}">
 
@@ -55,9 +63,13 @@
 
 {% endblock %}
 
+\(
+{% block macro %}
+{% endblock %}
+\)
 
-	<div class="container-fluid content">
-		<div class="row">
+	<div class="container-fluid content ">
+		<div class="row background-folder">
 			<div class="col-md-10">
 
 				{% if messages %} {% for message in messages %}

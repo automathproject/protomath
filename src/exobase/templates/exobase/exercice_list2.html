@@ -1,12 +1,24 @@
 {% extends 'exobase/base.html' %}
+{% block title %}OYM - Résultats de la recherche{% endblock %}
 
 {% block content %}
+
 {% if tag %}
-Résultats de la recherche du tag "{{ tag }}"
+<div class="title">Résultats de la recherche du tag "{{ tag }}" </div>
+
+{% else %}
+
+<div class="title">Résultats de la recherche </div>
+
 {% endif %}
+
+<div class="container-fluid">
+<div class="row">
 
 
 {% include 'exobase/list.html' %}
+</div>
+</div>
 
 {% endblock %}
  

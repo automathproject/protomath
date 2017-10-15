@@ -1,5 +1,7 @@
 {% extends 'exobase/base.html' %}
 
+{% block title %}Connexion{% endblock %}
+
 
 {% block content %}
     {% if form.errors %}
@@ -14,7 +16,7 @@
     please login with an account that has access.</p>
     {% else %}
 
-<p>Please login to see this page.</p>
+<p>Connectez-vous pour voir cette page.</p>
     {% endif %}
 {% endif %}
 

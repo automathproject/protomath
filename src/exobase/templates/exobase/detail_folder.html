@@ -1,11 +1,10 @@
 {% extends 'exobase/base.html' %}
 {% load exobase_extras %}
+{% block title %} OYM - {{ folder.name }} {% endblock %}
 
 {% block content %}
 
 <div class="container detail_folder">
-
-
 
 <div data-spy="scroll" data-target="#folder_nav" data-offset="0" class="scrollspy-folder">
 
@@ -62,85 +61,55 @@
 {% with exercice.id|stringformat:"s" as ex_id %}
 {% if 'exobase.see_exercice_'|add:ex_id in perms %}
 
-<div class="title"> {{ exercice.name }}  
+<div class="">
+<div class="title hider"> {{ exercice.name }}   </div>
+<div class="wrapper">
+<div class="contenthider">
 
- </div>
-  <div class="metadata"> {% metadata exercice %} </div>
- 
-<div class="description">
-{{ exercice.description }}
+ <div class="description">
+<p> {{ exercice.description }} </p>
 </div> 
-
- <ul class="tags">
+  <div class="metadata"> {% metadata exercice %} </div>
+  <ul class="tags">
 {% for tag in exercice.tags.all %}
 <li><a href="{% url 'exo_list'  tag_slug=tag.slug %}" class="tag"> {{ tag }}</a></li>
 {% endfor %}
 </ul>
- 
- 
+</div>
+</div>
+
+ </div>
  
 
  {% if exercice.enonce_html %}
   <div class="exo">
- 
-  <div>
-                {{ exercice.enonce_html|safe }}
+   <div>
+   {{ exercice.enonce_html|safe }}
   </div>
   </div>
-  
- {% endif %}
+  {% endif %}
  
   {% if exercice.figure %}
     <div class="exo">
-  
-                 {{ exercice.figure|safe }}
+    {{ exercice.figure|safe }}
    </div>
- 
   {% endif %}
-{% if exercice.solution_set %}
-{% for solution in exercice.solution_set.all %}
-
-{% with solution.id|stringformat:"s" as sol_id %}
-{% if 'exobase.see_solution_'|add:sol_id in perms %}
-
-<div class="solution">
-
-<div class="title hider">Solution</div>
+  
+  {% if exercice.indication_html %}
+  
+  <div class="indication">
+  <div class="hider">Besoin d'aide ?</div>
 
 <div class="wrapper"> 
 <div class="contenthider">
-<div class="">
-<kbd>#{{ solution.id }}</kbd>
-{% if user == solution.author %}
-<a class="btn btn-default" href="{% url 'solution_edit' pk=solution.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-{% endif %}
-<span style="font-size:16px;cursor:pointer" onclick=" "> 
-{% if solution|sol_visible_by_group:'PUBLIC' %}
- <span class="label label-success glyphicon glyphicon-eye-open"> public </span>
-{% else %}
- <span class="label label-warning glyphicon glyphicon-eye-open"> limité </span>
-{% endif %}
-</span>
-
-
-
-
-</div>
-
-<div class="metadata">{% metadata solution %}</div>
-<div>
-{{ solution.enonce_html|safe }}
-</div>
+<div class="text">
+  {{ exercice.indication_html|safe }}
+  </div>
 </div>
 </div>
 </div>
 {% endif %}
-{% endwith %}
-
-{% endfor %}
-{% endif %}
-
-
+ 
 
 {% else %}
 <p> Vous n'avez pas l'autorisation pour voir cet exercice </p>
@@ -149,14 +118,13 @@
 
 
 
-
-
-
-
 </div>
 
 {% endwith %}
 {% endfor %}
+
+
+
 
 				{% if messages %} {% for message in messages %}
 				<div id="error_message">
@@ -167,6 +135,8 @@
 				</div>
 				{% endfor %} {% endif %} 
 
+{% with folder.id|stringformat:"s" as folder_id %}
+{% if 'exobase.edit_folder_'|add:folder_id in perms %}
 <div id="tabs-{{ numbermaxplusun }}" class="folder">
 <div class="title">Ajouter des exercices    </div>
     <form method="POST" class="post-form">{% csrf_token %}
@@ -175,7 +145,8 @@
     </form>
 
 </div>
-
+{% endif %}
+{% endwith %}
 
 </div>
 </div>

@@ -2,6 +2,12 @@
 
 {% load exobase_extras %}
 
+{% block macro %}
+ {{ exercice.macro.macro }}
+{% endblock %}
+
+{% block title %}OYM - Exercice {{ exercice.id }} {% endblock %}
+
 
 {% block content %}
 
@@ -83,7 +89,7 @@ Ajouter un lecteur :
 						class="input-sm form-control" placeholder="Nom">
 					<button id="search_submit" type="submit"
 						class="btn btn-primary btn-sm">
-						<span class="glyphicon glyphicon-eye-plus"></span> Ajouter
+						<span class="glyphicon glyphicon-plus"></span> Ajouter
 					</button>
 </form>
 </div>
@@ -112,7 +118,7 @@ Ajouter une classe :
 						class="input-sm form-control" placeholder="Numéro">
 					<button id="search_submit" type="submit"
 						class="btn btn-primary btn-sm">
-						<span class="glyphicon glyphicon-eye-plus"></span> Ajouter
+						<span class="glyphicon glyphicon-plus"></span> Ajouter
 					</button>
 </form>
 </div>
@@ -162,7 +168,7 @@ Supprimer une classe :
  <span class="label label-warning glyphicon glyphicon-eye-open">  </span>
 {% endif %}
 {% endif %}
-
+<button type="button" class="btn  btn-xs" data-toggle="modal" data-target="#myModal">&ltLaTeX&gt</button>
 {% with exercice.id|stringformat:"s" as ex_id %}
 {% if 'exobase.see_exercice_'|add:ex_id in perms %}
 
@@ -173,10 +179,35 @@ Supprimer une classe :
 </form>
 </span>
 
-
 {% endif %}
 {% endwith %}
 </div>
+
+
+<div class="modal fade" id="myModal" role="dialog">
+    				<div class="modal-dialog">
+    
+      				<!-- Modal content-->
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">{{ exercice.name }}</h4>
+        				</div>
+        				<div class="modal-body latex">
+        				<textarea cols="80" rows="8" onclick="this.focus();this.select()">
+          				{{ exercice.enonce_latex }}
+          				</textarea>
+        				</div>
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>
+
+
+
 
 
 {% with exercice.id|stringformat:"s" as ex_id %}
@@ -208,9 +239,9 @@ Supprimer une classe :
   <div>
                 {{ exercice.enonce_html|safe }}
   </div>
-  </div>
   
- {% endif %}
+  </div>
+   {% endif %}
  
   {% if exercice.figure %}
     <div class="exo">
@@ -282,7 +313,7 @@ Supprimer une classe :
 
 <script>
 function openNav() {
-    document.getElementById("mySidenav").style.width = "200px";
+    document.getElementById("mySidenav").style.width = "250px";
 }
 
 function closeNav() {
@@ -291,11 +322,11 @@ function closeNav() {
 
 function togNav() {
 	  var nav = document.getElementById("mySidenav");
-	  if (nav.style.width == '200px') {
+	  if (nav.style.width == '250px') {
 	    nav.style.width = '0';
 	    nav.style.opacity = 0;
 	  } else {
-	    nav.style.width = "200px";
+	    nav.style.width = "250px";
 	    nav.style.opacity = 1;
 	  }
 	}
