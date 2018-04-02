@@ -16,7 +16,7 @@ Auteur :   {{ folder.author.username }} ; Dernière modification : {{ folder.pub
     <ul class="list-group">
     
     {% for o in orderfolder_list %}
-        <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  <kbd>{{ o.exercice.id }}</kbd> 
+        <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  <kbd>#{{ o.exercice.id }}</kbd> 
         
 			<span class="pull-right">		
 			<form action="{% url 'delete_exercice_folder' exercice_id=o.exercice.id folder_id=folder.id %}" method="POST">{% csrf_token %}

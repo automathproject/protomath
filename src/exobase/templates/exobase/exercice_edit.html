@@ -10,16 +10,55 @@
  -->
 
 {% block content %}
-<div class="container-fluid">
-<div class="row">
-        <div class="col-md-6 col-md-offset-3">
-  <form method="post" novalidate>
+<div class="container">
+<div class="col-md-8">
+<div class="title">{{ exercice.name }}</div>
+<div class="hider"> Editer les métadonnées de l'exercice {{ exercice.id }}   </div>
+<div class="wrapper">
+<div class="contenthider">
+
+  <form method="post" novalidate action="">
     {% csrf_token %}
     {% include 'exobase/includes/form.html' %}
     <button type="submit" class="btn btn-success btn-block">Enregistrer l'exercice</button>
   </form>
+
 </div>
+
+</div>
+<a href="{% url 'ex_enonce_edit'  pk=exercice.pk %}">Editer l'énoncé 
+ {% if exercice.enonce_html %}
+  <div class="exo little">
+ 
+                {{ exercice.enonce_html|safe }}
+  
+  </div>
+   {% endif %}
+   </a>
 </div>
 </div>
 
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

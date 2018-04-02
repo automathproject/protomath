@@ -168,9 +168,9 @@ Supprimer une classe :
  <span class="label label-warning glyphicon glyphicon-eye-open">  </span>
 {% endif %}
 {% endif %}
-<button type="button" class="btn  btn-xs" data-toggle="modal" data-target="#myModal">&ltLaTeX&gt</button>
 {% with exercice.id|stringformat:"s" as ex_id %}
 {% if 'exobase.see_exercice_'|add:ex_id in perms %}
+<button type="button" class="btn  btn-xs" data-toggle="modal" data-target="#myModal">&ltLaTeX&gt</button>
 
 <span class="pull-right">		
  <form method="post" action="{% url 'exercice_add_to_folder' exercice_id=exercice.id %}" style="margin: 0">{% csrf_token %}

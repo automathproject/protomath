@@ -15,7 +15,7 @@ from functools import reduce
 from exobase.models import Exercice, Folder, OrderFolder, Solution, Profile, Classe,\
     MacroLatex
 from exobase.forms import ExoForm, ExoSearch, ExoSearch2, NewUser, FolderForm, FolderAddExercice, ExerciceAddSolution, ProfileForm,\
-    NewUser2, ClassForm, ClassAddEleve, MacroForm, ClassAddFolder
+    NewUser2, ClassForm, ClassAddEleve, MacroForm, ClassAddFolder, ExoLatexForm
 
 from taggit.models import Tag 
 from django.contrib.contenttypes.models import ContentType
@@ -201,6 +201,23 @@ def ex_edit(request, pk):
     return render(request, 'exobase/exercice_edit.html', {'form': form, 'exercice': exercice})   
 
 @permission_required('exobase.change_exercice')
+def ex_enonce_edit(request, pk):
+    exercice = get_object_or_404(Exercice, pk=pk)
+    if request.method == "POST":
+        form = ExoLatexForm(request.POST, instance=exercice)
+        if form.is_valid():
+            exercice = form.save(commit=False)
+            exercice.pub_date = timezone.now()
+            if exercice.enonce_latex:
+                exercice.enonce_html = pypandoc.convert(exercice.enonce_latex,'html5',format='latex',extra_args=['--mathjax','--smart'])
+            exercice.save()
+            form.save_m2m()
+            return redirect('detail', exercice_id=pk)
+    else:
+        form = ExoLatexForm(instance=exercice)
+    return render(request, 'exobase/exercice_enonce_edit.html', {'form': form, 'exercice': exercice})   
+
+@permission_required('exobase.change_exercice')
 def ex_add_perm(request,pk):
     query = request.GET.get('perm_box')
     group_public = Group.objects.get(name='PUBLIC')
@@ -291,7 +308,7 @@ def sol_add_perm(request,pk):
         group_public.permissions.add(perm)
     else:
         group_public.permissions.remove(perm)
-    return redirect('solution_detail',pk=pk)
+    return redirect('solution_edit',pk=pk)
 
 @permission_required('exobase.change_solution')
 def sol_add_reader(request,solution_id):
@@ -330,7 +347,7 @@ def sol_add_group(request,solution_id):
                 messages.add_message(request, messages.WARNING, u'Ce groupe ou cette classe n\'existe pas')
         else:
             messages.add_message(request, messages.WARNING, u'Veuillez entrer un numéro d\'identifiant de classe')
-    return redirect('solution_detail', pk=solution_id)
+    return redirect('solution_edit', pk=solution_id)
 
 @permission_required('exobase.change_solution')
 def sol_delete_reader(request,solution_id):
@@ -351,7 +368,7 @@ def sol_delete_reader(request,solution_id):
                     messages.add_message(request, messages.WARNING, u'Cet utilisateur n\'existe pas')
         else:
             messages.add_message(request, messages.WARNING, u'Veuillez entrer un nom d\'utilisateur')
-    return redirect('solution_detail', pk=solution_id)
+    return redirect('solution_edit', pk=solution_id)
 
 @permission_required('exobase.change_solution')
 def sol_delete_group(request,solution_id):
@@ -374,7 +391,7 @@ def sol_delete_group(request,solution_id):
                 messages.add_message(request, messages.WARNING, u'Ce groupe ou cette classe n\'existe pas')
         else:
             messages.add_message(request, messages.WARNING, u'Veuillez entrer un numéro d\'identifiant de classe')
-    return redirect('solution_detail', pk=solution_id)
+    return redirect('solution_edit', pk=solution_id)
 
 def solution_detail(request,pk):
     solution = get_object_or_404(Solution, pk=pk)
@@ -841,6 +858,7 @@ def classe_detail(request,pk):
                 if User.objects.filter(username=eleve).exists():
                     e = User.objects.get(username=eleve)
                     classe.eleves.add(e)
+                    e.groups.add(groupe)
                     e.user_permissions.add(perm)
                 else:
                     messages.add_message(request, messages.WARNING, u'L\'élève {0} n\'existe pas'.format(eleve))
@@ -887,9 +905,11 @@ def classe_add_folder(request,classe_id):
 def delete_eleve_classe(request,classe_id,eleve_id):
     classe = get_object_or_404(Classe,pk=classe_id)
     eleve = get_object_or_404(User,pk=eleve_id)
-    perm = 'exobase.edit_class_{0}'.format(classe_id) 
+    perm = 'exobase.edit_class_{0}'.format(classe_id)
+    groupe = Group.objects.get(name = classe.name) 
     if request.user.has_perm(perm):
         classe.eleves.remove(eleve)
+        eleve.groups.remove(groupe)
         messages.add_message(request, messages.SUCCESS, u'L\'élève {0} a bien été retiré de cette classe'.format(eleve.username))
     else:
         messages.add_message(request, messages.WARNING, u'Vous n\'êtes pas autorisé.e à modifier cette classe')

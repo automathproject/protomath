@@ -1,0 +1,79 @@
+{
+  "_args": [
+    [
+      "guppy-js",
+      "/home/maxime"
+    ]
+  ],
+  "_from": "guppy-js@latest",
+  "_id": "guppy-js@2.0.0-beta.1",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/guppy-js",
+  "_nodeVersion": "9.5.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/guppy-js_2.0.0-beta.1_1521342635630_0.4767690610910216"
+  },
+  "_npmUser": {
+    "email": "daniel3735928559@gmail.com",
+    "name": "d3735928559"
+  },
+  "_npmVersion": "5.6.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "guppy-js",
+    "raw": "guppy-js",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/guppy-js/-/guppy-js-2.0.0-beta.1.tgz",
+  "_shasum": "42a3b42e68ae146f317b34c8b1ee955d8a63e17f",
+  "_shrinkwrap": null,
+  "_spec": "guppy-js",
+  "_where": "/home/maxime",
+  "author": {
+    "name": "daniel3735928559"
+  },
+  "bugs": {
+    "url": "https://github.com/daniel3735928559/guppy/issues"
+  },
+  "dependencies": {},
+  "description": "WYSIWYG mathematics equation editor",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "fileCount": 98,
+    "integrity": "sha512-sETw83tH4YdhydC/uPpDRG/5dbe1oUUyKRYtSpUx4kj7Ncg3RiI/g3JzBgfUWLBEdLqermqP38/AnVrhqLivSg==",
+    "shasum": "42a3b42e68ae146f317b34c8b1ee955d8a63e17f",
+    "tarball": "https://registry.npmjs.org/guppy-js/-/guppy-js-2.0.0-beta.1.tgz",
+    "unpackedSize": 3160694
+  },
+  "homepage": "https://daniel3735928559.github.io/guppy",
+  "keywords": [
+    "editor",
+    "equation",
+    "math",
+    "wysiwyg"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "d3735928559",
+      "email": "daniel3735928559@gmail.com"
+    }
+  ],
+  "name": "guppy-js",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniel3735928559/guppy.git"
+  },
+  "version": "2.0.0-beta.1"
+}

@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^list/$', views.ExerciceList.as_view(), name='exo_list2'),
     url(r'^exercice/(?P<exercice_id>[0-9]+)/$', views.detail, name='detail'),
     url(r'^exercice/(?P<pk>[0-9]+)/edit/$', views.ex_edit, name='post_edit'),
+    url(r'^exercice/(?P<pk>[0-9]+)/enonce_edit/$', views.ex_enonce_edit, name='ex_enonce_edit'),
     url(r'^exercice/(?P<pk>[0-9]+)/addperm/$', views.ex_add_perm, name='ex_add_perm'),
     url(r'^exercice/(?P<exercice_id>[0-9]+)/addreader/$', views.ex_add_reader, name='ex_add_reader'),
     url(r'^exercice/(?P<exercice_id>[0-9]+)/addgroup/$', views.ex_add_group, name='ex_add_group'),
