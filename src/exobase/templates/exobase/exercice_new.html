@@ -1,0 +1,20 @@
+{% extends 'exobase/base.html' %}
+{% block title %} Nouvel exercice {% endblock %}
+
+<!-- 
+
+ -->
+
+{% block content %}
+<div class="container">
+<div class="col-md-8">
+
+  <form method="post" novalidate action="">
+    {% csrf_token %}
+    {% include 'exobase/includes/form.html' %}
+    <button type="submit" class="btn btn-success btn-block">Enregistrer l'exercice</button>
+  </form>
+
+</div>
+</div>
+{% endblock %}
