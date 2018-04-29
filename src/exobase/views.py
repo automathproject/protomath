@@ -15,7 +15,7 @@ from functools import reduce
 from exobase.models import Exercice, Folder, OrderFolder, Solution, Profile, Classe,\
     MacroLatex
 from exobase.forms import ExoForm, ExoSearch, ExoSearch2, NewUser, FolderForm, FolderAddExercice, ExerciceAddSolution, ProfileForm,\
-    NewUser2, ClassForm, ClassAddEleve, MacroForm, ClassAddFolder, ExoLatexForm
+    NewUser2, ClassForm, ClassAddEleve, MacroForm, ClassAddFolder, ExoLatexForm, ExoForm0
 
 from taggit.models import Tag 
 from django.contrib.contenttypes.models import ContentType
@@ -131,7 +131,7 @@ def exercice_tag_list(request, tag_slug=None):
 @permission_required('exobase.add_exercice')
 def ex_new(request):
     if request.method == "POST":
-        form = ExoForm(request.POST)
+        form = ExoForm0(request.POST)
         if form.is_valid():
             exercice = form.save(commit=False)
             exercice.pub_date = timezone.now()
@@ -169,8 +169,8 @@ def ex_new(request):
             profs.permissions.add(perm)
             return redirect('detail',exercice_id=exercice_id)
     else:
-        form = ExoForm()
-    return render(request, 'exobase/exercice_edit.html', {'form': form})
+        form = ExoForm0()
+    return render(request, 'exobase/exercice_new.html', {'form': form})
 
 @permission_required('exobase.change_exercice')
 def ex_edit(request, pk):

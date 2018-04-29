@@ -30,6 +30,27 @@ class ExoForm(forms.ModelForm):
                   'tags': 'tags',
         }
 
+class ExoForm0(forms.ModelForm):
+    
+    class Meta:
+        model = Exercice
+        fields = ['name',
+                  'visibility',
+                  'description',
+                  'enonce_latex',
+                  'indication_latex',
+                  'macro',
+                  'tags']
+        labels = {
+                  'name': 'Nom de l\'exercice',
+                  'visibility': 'Visibilité',
+                  'description': 'Description',
+                  'enonce_latex': 'Enoncé (en LaTeX)',
+                  'indication_latex': 'Indications en LaTeX',
+                  'macro': 'Sélectionner un fichier de macros LaTeX',
+                  'tags': 'tags',
+        }
+
 class ExoLatexForm(forms.ModelForm):
     
     class Meta:
