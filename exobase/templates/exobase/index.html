@@ -1,0 +1,99 @@
+
+{% extends 'exobase/base.html' %}
+
+{% block title %}OYM{% endblock %}
+
+{% block home %}
+
+<div class="home0" style="padding-top:50px">
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- <div class="container">
+<div class="row">
+<div class="col-md-6">
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+{% if latest_exercice_list %}
+
+ <div class="panel panel-default">
+<div class="panel-heading"> Les dix derniers exercices en ligne sont : </div>
+    <ul class="list-group">
+    {% for exercice in latest_exercice_list %}
+        <li class="list-group-item"> <span class="glyphicon glyphicon-file"></span>  #{{ exercice.id }}</kbd> 
+        
+  			Trigger the modal with a button
+ 			<span class="pull-right">
+  			<a href="{% url 'detail'  exercice_id=exercice.id %}" class="btn btn-primary btn-xs" role="button"  >Open</a>
+			</span>
+  			<span class="pull-right">
+  			<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal-{{ exercice.id }}">Preview</button>
+			</span>
+
+ 			 Modal
+ 				 <div class="modal fade" id="myModal-{{ exercice.id }}" role="dialog">
+    				<div class="modal-dialog modal-lg">
+    
+      				Modal content
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">Exercice <mark>{{ exercice.id }}</mark></h4>
+        				</div>
+        				<div class="modal-body">
+          				{{ exercice.enonce_html|safe }}
+          				{{ exercice.figure|safe }}
+        				</div>
+        				
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>
+  
+        
+        
+        
+        </li>
+    {% endfor %}
+    </ul>
+    
+{% else %}
+    <div class="well">Aucun exercice n'est présent dans la base.</div>
+{% endif %}
+</div>
+
+</div>
+
+<div class="col-md-6">
+{% if latest_folder_list %}
+
+<div class="panel panel-default">
+<div class="panel-heading"> Les dix derniers dossiers en ligne sont : </div>
+    <div class="list-group">
+    {% for folder in latest_folder_list %}
+    <a href="{% url 'folder_detail'  folder_id=folder.id %}" class="list-group-item"><span class="glyphicon glyphicon-folder-open"></span>  #{{ folder.id }} : {{ folder.name }} <span class="glyphicon glyphicon-chevron-right pull-right"></span> <span class="badge pull-right"> {{ folder.count_exercice }}</span></span></a>
+     
+     {% endfor %}
+    </div>
+{% else %}
+    <div class="well">Aucun dossier n'est présent dans la base.</div>
+{% endif %}
+</div>
+
+</div>
+</div>
+</div> -->
+
+
+
+{% endblock %}
+ 

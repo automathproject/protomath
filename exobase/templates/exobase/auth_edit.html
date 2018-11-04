@@ -1,0 +1,22 @@
+{% extends 'exobase/base.html' %}
+
+{% block content %}
+
+ <div class="container-fluid">
+<div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+<div class="title"><a href="{% url 'profile' %}" class="glyphicon glyphicon-user"> {{ user.username }}</a></div>
+
+
+
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include 'exobase/includes/form2.html' %}
+    <button type="submit" class="btn btn-success btn-block">Enregistrer les modifications</button>
+  </form>
+</div>
+</div>
+</div>
+{% endblock %}

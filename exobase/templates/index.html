@@ -1,0 +1,57 @@
+{% load staticfiles %}
+<!doctype html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<html>
+<head>
+<title>{% block title %} {% endblock %}</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+<link
+	href='//fonts.googleapis.com/css?family=Lobster&amp;subset=latin,latin-ext'
+	rel='stylesheet' type='text/css'>
+
+
+<link href="https://fonts.googleapis.com/css?family=Overlock" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+
+
+<link href='https://fonts.googleapis.com/css?family=Dekko' rel='stylesheet' type='text/css'>
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'exobase/style.css' %}">
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
+<script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+	type="text/javascript"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+	
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	type="text/javascript"></script>
+
+
+<!-- 	<link rel="stylesheet" href="{% static 'css/latex2html5.css' %}"> 
+     <script type="text/javascript" src="{% static 'js/latex2html5.min.js' %}"></script>  -->
+</head>
+<body>
+	<div class="container-fluid" style="margin:10px">
+	<div class="col-md-8">
+	
+	<div class="row">
+		
+Bienvenue sur Openyourmath		</div>
+	<div class="row"> Découvrez la plus grande base d'exercices de mathématiques de l'univers.</div>
+
+<div class="row"><a href="{% url 'index' %}" > Accéder à EXOBASE</a>
+</div>
+	</div>
+	</div>
+</body>
+ </html>

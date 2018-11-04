@@ -1,0 +1,50 @@
+{% extends 'exobase/base.html' %}
+{% block title %} OYM - Mes dossiers {% endblock %}
+{% block content %}
+
+<div class="title"> <span class="glyphicon glyphicon-folder-open"></span> Liste de mes dossiers : </div>
+
+Vous avez {{ folder_list.count }} dossiers.
+
+<table id="tabsearch" class="display tableresponsive" width = "100%" cellspacing = "0">
+<thead>
+	<tr>
+		<th> #Id </th>
+		<th> Nom </th>
+		<th> Date </th>
+		<th> Description </th>
+		<th> Nombre d'exercices </th>
+		<th> Action </th>
+	</tr>
+</thead>
+<tfoot>
+	<tr>
+		<th> #Id </th>
+		<th> Nom </th>
+		<th> Date </th>
+		<th> Description </th>
+		<th> Nombre d'exercices </th>
+		<th> Action </th>
+	</tr>
+</tfoot>
+<tbody>
+    {% for folder in folder_list %}
+	<tr>
+	<td> <kbd>#{{ folder.pk }}</kbd></td>
+	<td> {{ folder.name }}  </td>
+	<td> {{ folder.pub_date }}  </td>
+	<td> {{ folder.description }}  </td>
+	<td> {{ folder.exercices.count }}  </td>
+	<td> <a href="{% url 'folder_resume'  folder_id=folder.id %}" class="btn btn-primary btn-xs" role="button"  >Open</a>
+			<span class="pull-right">		
+			<form action="{% url 'folder_delete' folder_id=folder.id  %}" method="POST">{% csrf_token %}
+  	<button type="submit" class="btn btn-warning btn-xs">Supprimer</button>
+		</form>
+		</span>
+ </td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+	
+{% endblock %}

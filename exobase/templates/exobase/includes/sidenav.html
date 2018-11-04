@@ -1,0 +1,144 @@
+{% load exobase_extras %}
+
+<div id="mySidenav0" class="sidenav">
+
+<p>
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+</p>
+
+{% if user|has_group:'PROFS' %}
+<button class="accordion title"> Mes 10 derniers exercices </button>
+<div class="panel2"> 
+
+<div class="shortlist">
+<ul id="myUL1" class="myshortlist">
+{% for element in latest_exercices %}
+<li><a href="{% url 'detail' exercice_id=element.id %}"> #{{ element.id }} - {{ element.name }}  ({{ element.pub_date }}) </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput1" class="listsearch" onkeyup="ExoSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+</div>
+{% endif %}
+<button class="accordion title"> Mes classes </button>
+<div class="panel2"> 
+
+<div class="shortlist">
+<ul id="myUL2" class="myshortlist">
+{% for element in classe_list %}
+<li><a href="{% url 'classe_detail' pk=element.id %}"> #{{ element.id }} - {{ element.name }}  </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput2" class="listsearch" onkeyup="ClasseSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+</div>
+
+
+<button class="accordion title"> Mes Dossiers </button>
+<div class="panel2"> 
+
+<div class="shortlist">
+<ul id="myUL" class="myshortlist">
+{% for element in folder_list %}
+<li><a href="{% url 'folder_detail' folder_id=element.id %}"> #{{ element.id }} - {{ element.name }}  ({{ element.pub_date }}) </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput" class="listsearch" onkeyup="FolderSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+</div>
+
+
+
+</div>
+
+<script>
+function openNav0() {
+    document.getElementById("mySidenav0").style.width = "250px";
+}
+
+function closeNav0() {
+    document.getElementById("mySidenav0").style.width = "0px";
+}
+
+function togNav0() {
+	  var nav = document.getElementById("mySidenav0");
+	  if (nav.style.width == '250px') {
+	    nav.style.width = '0';
+	    nav.style.opacity = 0;
+	  } else {
+	    nav.style.width = "250px";
+	    nav.style.opacity = 1;
+	  }
+	}
+
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  }
+}
+
+function FolderSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+function ExoSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput1");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL1");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+function ClasseSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput2");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL2");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+</script>

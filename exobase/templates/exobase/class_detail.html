@@ -1,0 +1,162 @@
+{% extends 'exobase/base.html' %}
+{% block title %} OYM - {{ classe.name }} {% endblock %}
+
+{% block content %}
+
+<div class="title"> <span class="glyphicon glyphicon-education"></span> {{ classe.name }}</div>
+
+<div class="description"> Enseignants : {% for prof in profs_in_classe %} {{ prof }}, {% endfor %} </div>
+{% if eleves_in_classe %}
+
+<table id="tabsearch" class="display tableresponsive" width = "100%" cellspacing = "0">
+<thead>
+	<tr>
+
+		<th> identifiant </th>
+		<th> Prénom </th>
+		<th> Nom </th>
+		<th> Statut </th>
+		<th> action </th>
+	</tr>
+</thead>
+<tfoot>
+	<tr>
+
+		<th> identifiant </th>
+		<th> Prénom </th>
+		<th> Nom </th>
+		<th> Statut </th>
+		<th> action </th>
+	</tr>
+</tfoot>
+<tbody>
+    {% for eleve in eleves_in_classe %}
+	<tr> 
+
+		<td> {{ eleve.username }} </td>
+		<td> {{ eleve.first_name }} </td>
+		<td> {{ eleve.last_name }} </td>
+		<td> {{ eleve.profile.get_work_display }} </td>
+		<td> 
+		{% with classe.id|stringformat:"s" as classe_id %}
+		{% if 'exobase.edit_class_'|add:classe_id in perms %}
+		
+		<a class="btn btn-default" href="{% url 'delete_eleve_classe' classe_id=classe.pk eleve_id=eleve.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+		{% endif %}
+		{% endwith %}
+		</td>
+	</tr>
+	{% endfor %}
+</tbody>
+</table>
+
+{% endif %}
+
+		{% with classe.id|stringformat:"s" as classe_id %}
+		{% if 'exobase.edit_class_'|add:classe_id in perms %}
+<button type="button" class="btn  btn-default" data-toggle="modal" data-target="#addEleve"><span class="glyphicon glyphicon-plus"></span> Ajouter un élève</button>
+
+<div class="modal fade" id="addEleve" role="dialog">
+    				<div class="modal-dialog">
+    
+      				<!-- Modal content-->
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">Ajouter des élèves</h4>
+        				</div>
+        				<div class="modal-body">
+        				<form method="post" novalidate>
+    {% csrf_token %}
+    {% include 'exobase/includes/form.html' %}
+    <button type="submit" class="btn btn-success btn-block">Enregistrer l'ajout</button>
+  </form>
+        				</div>
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>
+
+ <div class="container-fluid">
+<div class="row">
+        <div class="col-md-6 col-md-offset-3">
+    <button class="accordion title"> Dossiers de la classe </button>
+    <div class="panel2"> 
+<button type="button" class="btn  btn-default" data-toggle="modal" data-target="#addFolder"><span class="glyphicon glyphicon-plus"></span> Ajouter un dossier</button><div class="shortlist">
+<ul id="myUL" class="myshortlist">
+{% for element in folder_list %}
+<li><a href="{% url 'folder_detail' folder_id=element.id %}"> #{{ element.id }} - {{ element.name }}  ({{ element.pub_date }}) </a></li>
+{% endfor %}
+</ul>
+</div>
+
+<input type="text" id="myInput" class="listsearch" onkeyup="FolderSearch()" placeholder="Chercher un nom..." title="Chercher un nom">
+</div>
+
+</div>
+</div>
+</div>
+		{% endif %}
+		{% endwith %} 
+
+<div class="modal fade" id="addFolder" role="dialog">
+    				<div class="modal-dialog">
+    
+      				<!-- Modal content-->
+      				<div class="modal-content">
+        				<div class="modal-header">
+          					<button type="button" class="close" data-dismiss="modal">&times;</button>
+          					<h4 class="modal-title">Ajouter des élèves</h4>
+        				</div>
+        				<div class="modal-body">
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form2.as_p }}
+    <button type="submit" class="btn btn-success btn-block">Enregistrer l'ajout</button>
+  </form>	
+        				</div>
+        				<div class="modal-footer">
+          				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				</div>
+      				</div>
+      
+    				</div>
+  				</div>  
+<script>
+function FolderSearch() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight){
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  }
+}
+
+</script>
+{% endblock %}
